@@ -36,8 +36,9 @@ type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage, initialMessage } = useChat();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -51,11 +52,27 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     form.reset();
   };
 
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = () => {
+    if (scrollAreaRef.current) {
+      const scrollableView = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+      if(scrollableView) {
+        scrollableView.scrollTop = scrollableView.scrollHeight;
+      }
     }
-  }, [messages, isLoading]);
+  };
+
+  useEffect(() => {
+    if (isAtBottom) {
+        scrollToBottom();
+    }
+  }, [messages, isLoading, isAtBottom]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const atBottom = scrollHeight - scrollTop <= clientHeight + 20; // +20 for a small threshold
+    setIsAtBottom(atBottom);
+  };
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -123,9 +140,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         </Button>
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-y-auto">
-        <ScrollArea className="h-full">
+        <ScrollArea className="h-full" ref={scrollAreaRef} onScroll={handleScroll}>
           <div className="p-4 space-y-4">
-            {messages.length === 0 && (
+            {messages.length === 0 && initialMessage && (
                  <div className="flex items-end gap-2 justify-start">
                     <Avatar className="w-8 h-8">
                       <AvatarFallback className="bg-primary text-primary-foreground">
@@ -133,7 +150,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3">
-                      {initialMessage.content}
+                      <ChatMessage
+                        message={initialMessage}
+                        isLastMessage={false}
+                        isTyping={false}
+                      />
                     </div>
                 </div>
             )}
@@ -162,7 +183,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 >
                   <ChatMessage 
                     message={message}
-                    isLastMessage={index === messages.length -1}
+                    isLastMessage={index === messages.length - 1}
                     isTyping={isLoading}
                   />
                 </div>
@@ -187,7 +208,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
       </CardContent>
