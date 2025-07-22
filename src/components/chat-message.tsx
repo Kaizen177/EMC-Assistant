@@ -19,15 +19,53 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   const renderContent = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
-    const bulletRegex = /^\s*[-*]\s(.*)/gm;
 
-    let processedText = text
-      .replace(boldRegex, '<strong>$1</strong>')
-      .replace(bulletRegex, '<ul><li>$1</li></ul>')
-      // This is a simplification; for proper nested lists, a more complex parser would be needed.
-      // Collapsing multiple <ul> tags into one for consecutive list items.
-      .replace(/<\/ul>\s*<ul>/g, '');
+    const lines = text.split('\n');
+    let inUlist = false;
+    let inOlist = false;
 
+    const processedLines = lines.map(line => {
+      let processedLine = line;
+
+      // Handle lists
+      const uliMatch = /^\s*[-*]\s(.*)/.exec(processedLine);
+      const oliMatch = /^\s*\d+\.\s(.*)/.exec(processedLine);
+
+      if (uliMatch) {
+        let prefix = '';
+        if (!inUlist) {
+          prefix = '<ul>';
+          inUlist = true;
+        }
+        processedLine = `${prefix}<li>${uliMatch[1]}</li>`;
+      } else if (inUlist) {
+        processedLine = '</ul>' + processedLine;
+        inUlist = false;
+      }
+
+      if (oliMatch) {
+        let prefix = '';
+        if (!inOlist) {
+          prefix = '<ol>';
+          inOlist = true;
+        }
+        processedLine = `${prefix}<li>${oliMatch[1]}</li>`;
+      } else if (inOlist) {
+        processedLine = '</ol>' + processedLine;
+        inOlist = false;
+      }
+
+      // Handle bold
+      processedLine = processedLine.replace(boldRegex, '<strong>$1</strong>');
+
+      return processedLine;
+    });
+
+    if (inUlist) processedLines.push('</ul>');
+    if (inOlist) processedLines.push('</ol>');
+    
+    const processedText = processedLines.join('\n').replace(/<\/ul>\n<ul>/g, '').replace(/<\/ol>\n<ol>/g, '');
+    
     const parts = processedText.split(urlRegex);
 
     return parts.map((part, index) => {
@@ -45,10 +83,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           </a>
         );
       }
+      // Using dangerouslySetInnerHTML because we are constructing HTML for lists and bolding
       return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
-
+  
   if (message.role === 'assistant' && isTyping && isLastMessage) {
     return <div />; // Render nothing for the placeholder assistant message while typing
   }
