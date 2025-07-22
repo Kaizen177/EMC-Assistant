@@ -1,3 +1,4 @@
+
 "use client";
 
 import { type FC, useEffect, useRef } from "react";
@@ -16,11 +17,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import TypingAnimation from "./typing-animation";
-import { Textarea } from "./ui/textarea";
 import TypingDots from "./typing-dots";
+import { Textarea } from "./ui/textarea";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -43,6 +42,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -67,14 +67,14 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     }
   };
   
-  const { watch, control, setValue } = form;
+  const { watch, control } = form;
   const messageValue = watch("message");
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto'; // Reset height
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set to scroll height
+      textarea.style.height = 'auto'; 
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }, [messageValue]);
 
@@ -113,7 +113,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <div className="p-4 space-y-4">
-          {messages.map((message, index) => (
+          {messages.map((message) => (
             <div
               key={message.id}
               className={cn(
@@ -136,13 +136,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     : "bg-muted text-card-foreground rounded-bl-none"
                 )}
               >
-                {message.role === 'assistant' && isLoading && index === messages.length -1 ? (
-                  <TypingAnimation text={message.content} speed={10}/>
-                ) : message.role === 'assistant' && index === messages.length - 1 ? (
-                  <TypingAnimation text={message.content} speed={10}/>
-                ) : (
-                  message.content
-                )}
+                {message.content}
               </div>
               {message.role === "user" && (
                 <Avatar className="w-8 h-8">
@@ -178,20 +172,22 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               control={control}
               name="message"
               render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl>
-                  <Textarea
-                    ref={textareaRef}
-                    placeholder="Type a message..."
-                    className="resize-none overflow-y-hidden focus-visible:ring-0 focus-visible:ring-offset-0 border-0"
-                    rows={1}
-                    onKeyDown={handleKeyDown}
-                    {...field}
-                    disabled={isLoading}
-                    autoComplete="off"
-                  />
-                </FormControl>
-              </FormItem>
+                <FormItem className="flex-1">
+                  <FormControl>
+                    <Textarea
+                      ref={textareaRef}
+                      placeholder={isFocused ? "" : "Type a message..."}
+                      className="resize-none overflow-y-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
+                      rows={1}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      onKeyDown={handleKeyDown}
+                      {...field}
+                      disabled={isLoading}
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                </FormItem>
               )}
             />
             <Button
