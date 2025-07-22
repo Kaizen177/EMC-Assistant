@@ -30,14 +30,14 @@ export default function ChatAssistant() {
 
       <div
         className={cn(
-          "fixed inset-0 z-[999] transition-opacity duration-300 md:bottom-28 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto",
+          "fixed inset-0 z-[999] transition-opacity duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto",
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
         <ChatWindow
           className={cn(
-            "transform-gpu transition-transform duration-300 ease-out",
-            isOpen ? "translate-y-0" : "translate-y-10"
+            "transform-gpu transition-all duration-300 ease-out origin-bottom-right",
+            isOpen ? "scale-100 opacity-100" : "scale-75 opacity-0"
           )}
           onClose={() => setIsOpen(false)}
         />
