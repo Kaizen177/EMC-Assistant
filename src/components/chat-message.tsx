@@ -20,31 +20,34 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
-    const processLine = (line: string) => {
-      const parts = line.split(urlRegex);
-      return parts.map((part, index) => {
-        if (part.match(urlRegex)) {
-          const href = part.startsWith('www.') ? `http://${part}` : part;
-          return (
-            <a
-              key={index}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline font-bold"
-            >
-              {part}
-            </a>
-          );
+    const processPart = (part: string, key: number) => {
+      if (part.match(urlRegex)) {
+        const href = part.startsWith('www.') ? `http://${part}` : part;
+        return (
+          <a
+            key={key}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline"
+          >
+            {part}
+          </a>
+        );
+      }
+      
+      const boldParts = part.split(boldRegex);
+      return boldParts.map((boldPart, boldIndex) => {
+        if (boldIndex % 2 === 1) {
+          return <strong key={`${key}-${boldIndex}`}>{boldPart}</strong>;
         }
-        const boldParts = part.split(boldRegex);
-        return boldParts.map((boldPart, boldIndex) => {
-          if (boldIndex % 2 === 1) {
-            return <strong key={boldIndex}>{boldPart}</strong>;
-          }
-          return <span key={boldIndex} dangerouslySetInnerHTML={{ __html: boldPart }} />;
-        });
+        return <span key={`${key}-${boldIndex}`} dangerouslySetInnerHTML={{ __html: boldPart }} />;
       });
+    };
+
+    const processLine = (line: string, keyPrefix: string) => {
+      const parts = line.split(urlRegex);
+      return parts.map((part, index) => processPart(part, index)).flat();
     };
 
     const lines = text.split('\n');
@@ -55,9 +58,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={elements.length} className={ListTag === 'ul' ? 'list-disc' : 'list-decimal' + ' pl-5 space-y-1 my-2'}>
+          <ListTag key={`list-${elements.length}`} className={ListTag === 'ul' ? 'list-disc' : 'list-decimal' + ' pl-5 space-y-1 my-2'}>
             {list.items.map((item, index) => (
-              <li key={index}>{processLine(item)}</li>
+              <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
           </ListTag>
         );
@@ -65,7 +68,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       }
     };
 
-    lines.forEach((line) => {
+    lines.forEach((line, lineIndex) => {
       const uliMatch = /^\s*[-*]\s(.*)/.exec(line);
       const oliMatch = /^\s*\d+\.\s(.*)/.exec(line);
 
@@ -79,15 +82,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
         list.items.push(oliMatch[1]);
       } else {
         flushList();
-        if (line.trim() === '') {
-          elements.push(<br key={elements.length} />);
-        } else {
-          elements.push(<p key={elements.length}>{processLine(line)}</p>);
+        if (line.trim() !== '') {
+           elements.push(<p key={`p-${lineIndex}`}>{processLine(line, `p-line-${lineIndex}`)}</p>);
         }
       }
     });
 
-    flushList(); // Flush any remaining list
+    flushList();
 
     return elements;
   };
