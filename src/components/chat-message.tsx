@@ -19,55 +19,60 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   const renderContent = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
-
+  
     const lines = text.split('\n');
-    let inUlist = false;
-    let inOlist = false;
-
-    const processedLines = lines.map(line => {
+    let htmlContent = '';
+    let inUList = false;
+    let inOList = false;
+  
+    lines.forEach((line, index) => {
       let processedLine = line;
-
+  
       // Handle lists
       const uliMatch = /^\s*[-*]\s(.*)/.exec(processedLine);
       const oliMatch = /^\s*\d+\.\s(.*)/.exec(processedLine);
-
+  
       if (uliMatch) {
-        let prefix = '';
-        if (!inUlist) {
-          prefix = '<ul>';
-          inUlist = true;
+        if (inOList) {
+          htmlContent += '</ol>';
+          inOList = false;
         }
-        processedLine = `${prefix}<li>${uliMatch[1]}</li>`;
-      } else if (inUlist) {
-        processedLine = '</ul>' + processedLine;
-        inUlist = false;
-      }
-
-      if (oliMatch) {
-        let prefix = '';
-        if (!inOlist) {
-          prefix = '<ol>';
-          inOlist = true;
+        if (!inUList) {
+          htmlContent += '<ul>';
+          inUList = true;
         }
-        processedLine = `${prefix}<li>${oliMatch[1]}</li>`;
-      } else if (inOlist) {
-        processedLine = '</ol>' + processedLine;
-        inOlist = false;
+        htmlContent += `<li>${uliMatch[1]}</li>`;
+      } else if (oliMatch) {
+        if (inUList) {
+          htmlContent += '</ul>';
+          inUList = false;
+        }
+        if (!inOList) {
+          htmlContent += '<ol>';
+          inOList = true;
+        }
+        htmlContent += `<li>${oliMatch[1]}</li>`;
+      } else {
+        if (inUList) {
+          htmlContent += '</ul>';
+          inUList = false;
+        }
+        if (inOList) {
+          htmlContent += '</ol>';
+          inOList = false;
+        }
+        htmlContent += `<p>${processedLine}</p>`;
       }
-
-      // Handle bold
-      processedLine = processedLine.replace(boldRegex, '<strong>$1</strong>');
-
-      return processedLine;
     });
-
-    if (inUlist) processedLines.push('</ul>');
-    if (inOlist) processedLines.push('</ol>');
-    
-    const processedText = processedLines.join('\n').replace(/<\/ul>\n<ul>/g, '').replace(/<\/ol>\n<ol>/g, '');
-    
-    const parts = processedText.split(urlRegex);
-
+  
+    if (inUList) htmlContent += '</ul>';
+    if (inOList) htmlContent += '</ol>';
+  
+    // Handle bold
+    htmlContent = htmlContent.replace(boldRegex, '<strong>$1</strong>');
+  
+    const parts = htmlContent.split(urlRegex);
+  
     return parts.map((part, index) => {
       if (part.match(urlRegex)) {
         const href = part.startsWith('www.') ? `http://${part}` : part;
@@ -83,7 +88,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           </a>
         );
       }
-      // Using dangerouslySetInnerHTML because we are constructing HTML for lists and bolding
       return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
