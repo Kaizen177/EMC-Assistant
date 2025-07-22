@@ -1,6 +1,6 @@
 "use client";
 
-import { type FC, useEffect, useRef } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -36,6 +36,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showInitialMessage, setShowInitialMessage] = useState(true);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -105,7 +106,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              L'IA peut faire des erreurs. Vérifiez les informations importantes.
+              Veuillez vérifier les informations importantes.
             </p>
           </div>
         </div>
@@ -122,7 +123,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {messages.length === 0 && (
+            {showInitialMessage && messages.length === 0 && (
               <div className={cn("flex items-end gap-2 justify-start")}>
                  <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
@@ -202,6 +203,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50"
                       rows={1}
                       onKeyDown={handleKeyDown}
+                      onFocus={() => setShowInitialMessage(false)}
                       {...field}
                       disabled={isLoading}
                       autoComplete="off"
