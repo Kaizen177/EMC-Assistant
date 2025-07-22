@@ -9,7 +9,7 @@ interface TypingAnimationProps {
   onComplete?: () => void;
 }
 
-const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 20, className, onComplete }) => {
+const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onComplete }) => {
   const [displayedText, setDisplayedText] = useState('');
   const onCompleteRef = useRef(onComplete);
 
