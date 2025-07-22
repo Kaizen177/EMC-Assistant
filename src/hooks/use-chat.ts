@@ -1,3 +1,4 @@
+
 "use client";
 
 import { aiPoweredChat, type AIPoweredChatInput } from "@/ai/flows/ai-powered-chat";
@@ -56,13 +57,12 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
 
       } catch (error) {
         console.error("Error with AI chat:", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request. Please try again.",
-        });
-        // Remove the user message that caused the error
-        setMessages(prev => prev.slice(0, -1));
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: "Désolé, une erreur est survenue. Veuillez réessayer plus tard.",
+        };
+        setMessages(prev => [...prev, errorMessage]);
       } finally {
         setIsLoading(false);
       }
