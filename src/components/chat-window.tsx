@@ -38,6 +38,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -55,16 +56,16 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     if (scrollAreaRef.current) {
       const scrollableView = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
       if(scrollableView) {
-        setTimeout(() => {
           scrollableView.scrollTop = scrollableView.scrollHeight;
-        }, 0);
       }
     }
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
+    if(isAtBottom) {
+      scrollToBottom();
+    }
+  }, [messages, isLoading, isAtBottom]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -91,6 +92,16 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       }
     }
   }, [messageValue]);
+
+  const handleScroll = () => {
+    const scrollableView = scrollAreaRef.current?.querySelector('div[data-radix-scroll-area-viewport]');
+    if (scrollableView) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollableView;
+      const isScrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 20;
+      setIsAtBottom(isScrolledToBottom);
+    }
+  };
+
 
   return (
     <Card
@@ -131,7 +142,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <X className="w-5 h-5" />
         </Button>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-y-auto">
+      <CardContent className="flex-1 p-0 overflow-y-auto" onScroll={handleScroll}>
         <ScrollArea className="h-full" ref={scrollAreaRef}>
           <div className="p-4 space-y-4">
             {messages.map((message, index) => (
@@ -162,6 +173,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     isLastMessage={index === messages.length - 1}
                     isTyping={isLoading}
                     onAnimationUpdate={scrollToBottom}
+                    onAnimationComplete={scrollToBottom}
                   />
                 </div>
                 {message.role === "user" && (

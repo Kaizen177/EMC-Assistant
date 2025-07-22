@@ -13,9 +13,10 @@ interface ChatMessageProps {
   isLastMessage: boolean;
   isTyping: boolean;
   onAnimationUpdate: () => void;
+  onAnimationComplete: () => void;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate, onAnimationComplete }) => {
   const renderContent = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
@@ -29,7 +30,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-accent-foreground hover:text-accent"
+            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
           >
             {part}
           </a>
@@ -58,7 +59,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-2'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-3'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -92,7 +93,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
 
     return elements.map((el, i) => {
         if(typeof el === 'string') {
-            return <p key={`p-${i}`} className="mb-2 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+            return <p key={`p-${i}`} className="mb-3 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
         }
         return el;
     });
@@ -103,7 +104,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   }
 
   if (message.role === 'assistant' && isLastMessage && !isTyping) {
-    return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} />;
+    return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} onComplete={onAnimationComplete} />;
   }
 
   return <div className="space-y-2">{renderContent(message.content)}</div>;

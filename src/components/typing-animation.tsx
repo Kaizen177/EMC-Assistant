@@ -8,15 +8,21 @@ interface TypingAnimationProps {
   speed?: number;
   className?: string;
   onUpdate?: () => void;
+  onComplete?: () => void;
 }
 
-const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate }) => {
+const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate, onComplete }) => {
   const [displayedText, setDisplayedText] = useState('');
   const onUpdateRef = useRef(onUpdate);
+  const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
     onUpdateRef.current = onUpdate;
   }, [onUpdate]);
+  
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     setDisplayedText('');
@@ -30,6 +36,9 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
         i++;
         if (i >= text.length) {
           clearInterval(intervalId);
+          if (onCompleteRef.current) {
+            onCompleteRef.current();
+          }
         }
       }, speed);
 
@@ -50,7 +59,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-accent-foreground hover:text-accent"
+            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
           >
             {part}
           </a>
@@ -79,7 +88,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-2'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-3'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -113,7 +122,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
 
     const renderedElements = elements.map((el, i) => {
         if(typeof el === 'string') {
-            return <p key={`p-${i}`} className="mb-2 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+            return <p key={`p-${i}`} className="mb-3 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
         }
         return el;
     });
