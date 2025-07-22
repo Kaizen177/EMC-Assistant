@@ -35,17 +35,10 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
       setMessages(newMessages);
       setIsLoading(true);
 
-      const assistantMessageTemplate: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "",
-      };
-      setMessages((prev) => [...prev, assistantMessageTemplate]);
-
       try {
         const chatHistoryForApi: AIPoweredChatInput['chatHistory'] = newMessages
-          .filter(msg => msg.id !== '0') // Do not include the initial message in the history for the AI
-          .slice(-12) // Keep last 12 messages for memory
+          .filter(msg => msg.id !== '0') 
+          .slice(-12) 
           .map(({ role, content }) => ({ role, content }));
 
         const result = await aiPoweredChat({
@@ -59,8 +52,7 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
           content: result.response,
         };
         
-        setMessages((prev) => [...prev.slice(0, -1), assistantMessage]);
-        setIsLoading(false);
+        setMessages((prev) => [...prev, assistantMessage]);
 
       } catch (error) {
         console.error("Error with AI chat:", error);
@@ -69,8 +61,9 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
           title: "Uh oh! Something went wrong.",
           description: "There was a problem with your request. Please try again.",
         });
-        // Remove the user message and assistant template that caused the error
-        setMessages(prev => prev.slice(0, -2));
+        // Remove the user message that caused the error
+        setMessages(prev => prev.slice(0, -1));
+      } finally {
         setIsLoading(false);
       }
     },
