@@ -56,7 +56,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -90,7 +90,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
 
     return elements.map((el, i) => {
         if(typeof el === 'string') {
-            return <p key={`p-${i}`} className="my-4 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+            return <p key={`p-${i}`} className="my-4 first:mt-0 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
         }
         return el;
     });
