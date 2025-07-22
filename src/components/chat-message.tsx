@@ -47,7 +47,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           return <span key={`${lineKey}-text-${index}-${linkIndex}`} dangerouslySetInnerHTML={{ __html: linkPart }} />;
         });
       });
-      return isListItem ? <>{content}</> : <p key={key} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
+      return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
 
     const lines = text.split('\n');
