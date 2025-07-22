@@ -92,7 +92,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 key={message.id}
                 className={cn(
                   "flex items-end gap-2",
-                  message.role === "user" ? "justify-end" : "justify-start"
+                  message.role === "user" ? "justify-end" : "justify-start",
+                  message.role === 'assistant' && index === messages.length -1 && "animate-in fade-in-25 slide-in-from-bottom-2"
                 )}
               >
                 {message.role === "assistant" && (
@@ -107,8 +108,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
                     message.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-none"
-                      : "bg-muted text-card-foreground rounded-bl-none",
-                     message.role === 'assistant' && index === messages.length - 1 && "animate-typing-fast overflow-hidden whitespace-nowrap"
+                      : "bg-muted text-card-foreground rounded-bl-none"
                   )}
                 >
                   {message.content}

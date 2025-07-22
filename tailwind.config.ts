@@ -98,16 +98,11 @@ export default {
             boxShadow: '0 0 0 8px hsl(var(--primary) / 0)',
           },
         },
-        'typing-fast': {
-          'from': { width: '0' },
-          'to': { width: '100%' }
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'ping-subtle': 'ping-subtle 1.5s infinite ease-in-out',
-        'typing-fast': 'typing-fast 0.8s steps(40, end)',
       },
     },
   },
