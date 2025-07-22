@@ -1,3 +1,9 @@
+import ChatAssistant from '@/components/chat-assistant';
+
 export default function Home() {
-  return <></>;
+  return (
+    <main>
+      <ChatAssistant />
+    </main>
+  );
 }
