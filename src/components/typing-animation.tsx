@@ -49,7 +49,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md hover:underline"
+            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-accent-foreground hover:text-accent"
           >
             {part}
           </a>
@@ -71,14 +71,14 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     };
 
     const lines = text.split('\n');
-    const elements: JSX.Element[] = [];
+    const elements: (JSX.Element | string)[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
 
     const flushList = () => {
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={ListTag === 'ul' ? 'list-disc' : 'list-decimal' + ' pl-5 space-y-1 my-2'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-2'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -88,7 +88,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
       }
     };
 
-    lines.forEach((line, lineIndex) => {
+    lines.forEach((line) => {
       const uliMatch = /^\s*[-*]\s(.*)/.exec(line);
       const oliMatch = /^\s*\d+\.\s(.*)/.exec(line);
 
@@ -103,14 +103,21 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
       } else {
         flushList();
         if (line.trim() !== '') {
-           elements.push(<p key={`p-${lineIndex}`}>{processLine(line, `p-line-${lineIndex}`)}</p>);
+           elements.push(line);
         }
       }
     });
 
     flushList();
 
-    return <span className={className}>{elements}</span>;
+    const renderedElements = elements.map((el, i) => {
+        if(typeof el === 'string') {
+            return <p key={`p-${i}`} className="mb-2 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+        }
+        return el;
+    });
+
+    return <div className={cn("space-y-2", className)}>{renderedElements}</div>;
   };
 
 

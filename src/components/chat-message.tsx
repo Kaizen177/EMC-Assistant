@@ -29,7 +29,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md hover:underline"
+            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-accent-foreground hover:text-accent"
           >
             {part}
           </a>
@@ -51,14 +51,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     };
 
     const lines = text.split('\n');
-    const elements: JSX.Element[] = [];
+    const elements: (JSX.Element | string)[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
 
     const flushList = () => {
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={ListTag === 'ul' ? 'list-disc' : 'list-decimal' + ' pl-5 space-y-1 my-2'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-2'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -68,7 +68,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       }
     };
 
-    lines.forEach((line, lineIndex) => {
+    lines.forEach((line) => {
       const uliMatch = /^\s*[-*]\s(.*)/.exec(line);
       const oliMatch = /^\s*\d+\.\s(.*)/.exec(line);
 
@@ -83,14 +83,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       } else {
         flushList();
         if (line.trim() !== '') {
-           elements.push(<p key={`p-${lineIndex}`}>{processLine(line, `p-line-${lineIndex}`)}</p>);
+            elements.push(line);
         }
       }
     });
 
     flushList();
 
-    return elements;
+    return elements.map((el, i) => {
+        if(typeof el === 'string') {
+            return <p key={`p-${i}`} className="mb-2 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+        }
+        return el;
+    });
   };
 
   if (message.role === 'assistant' && isTyping && isLastMessage) {
@@ -101,7 +106,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} />;
   }
 
-  return <div>{renderContent(message.content)}</div>;
+  return <div className="space-y-2">{renderContent(message.content)}</div>;
 };
 
 export default ChatMessage;
