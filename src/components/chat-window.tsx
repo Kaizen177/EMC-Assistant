@@ -96,8 +96,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
           </div>
           <div>
-            <p className="text-lg font-semibold">EMC Assistant</p>
-            <p className="text-sm text-muted-foreground">Online</p>
+            <div className="flex items-center gap-2">
+              <p className="text-lg font-semibold">EMC Assistant</p>
+              <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
+                BETA
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              L'IA peut être inexacte, veuillez vérifier les informations.
+            </p>
           </div>
         </div>
         <Button
@@ -163,7 +170,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t flex-col items-start gap-1">
+      <CardFooter className="p-2 border-t">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -200,9 +207,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             </Button>
           </form>
         </Form>
-        <p className="text-xs text-muted-foreground px-2">
-          L'IA peut être inexacte, veuillez vérifier les informations importantes.
-        </p>
       </CardFooter>
     </Card>
   );
