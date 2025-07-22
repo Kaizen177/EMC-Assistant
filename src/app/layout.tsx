@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'EMC Assistant (Beta)',
+  title: 'EMC Assistant (BETA1)',
   description: 'AI-Powered Chat Assistant',
 };
 

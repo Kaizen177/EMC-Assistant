@@ -1,4 +1,3 @@
-
 "use client";
 
 import { type FC, useEffect, useRef, useState } from "react";
@@ -38,7 +37,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     {
       id: "init",
       role: "assistant",
-      content: "Hello! I'm the EMC Assistant (Beta). How can I help you today?",
+      content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
     },
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -164,7 +163,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t">
+      <CardFooter className="p-2 border-t flex-col items-start gap-1">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -178,7 +177,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <FormControl>
                     <Textarea
                       ref={textareaRef}
-                      placeholder="Type a message..."
+                      placeholder="Écrivez un message..."
                       className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 max-h-[120px] overflow-y-auto"
                       rows={1}
                       onKeyDown={handleKeyDown}
@@ -201,6 +200,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             </Button>
           </form>
         </Form>
+        <p className="text-xs text-muted-foreground px-2">
+          L'IA peut être inexacte, veuillez vérifier les informations importantes.
+        </p>
       </CardFooter>
     </Card>
   );
