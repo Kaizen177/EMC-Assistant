@@ -16,10 +16,19 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate }) => {
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-
   const renderContent = (text: string) => {
-    const parts = text.split(urlRegex);
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const bulletRegex = /^\s*[-*]\s(.*)/gm;
+
+    let processedText = text
+      .replace(boldRegex, '<strong>$1</strong>')
+      .replace(bulletRegex, '<ul><li>$1</li></ul>')
+      // This is a simplification; for proper nested lists, a more complex parser would be needed.
+      // Collapsing multiple <ul> tags into one for consecutive list items.
+      .replace(/<\/ul>\s*<ul>/g, '');
+
+    const parts = processedText.split(urlRegex);
 
     return parts.map((part, index) => {
       if (part.match(urlRegex)) {
@@ -36,7 +45,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           </a>
         );
       }
-      return part;
+      return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
 

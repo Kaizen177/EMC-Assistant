@@ -36,9 +36,17 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     }
   }, [text, speed]);
 
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
   const renderContent = (text: string) => {
-    const parts = text.split(urlRegex);
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const bulletRegex = /^\s*[-*]\s(.*)/gm;
+
+    let processedText = text
+      .replace(boldRegex, '<strong>$1</strong>')
+      .replace(bulletRegex, '<ul><li>$1</li></ul>')
+      .replace(/<\/ul>\s*<ul>/g, '');
+
+    const parts = processedText.split(urlRegex);
 
     return parts.map((part, index) => {
       if (part.match(urlRegex)) {
@@ -55,7 +63,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
           </a>
         );
       }
-      return part;
+      return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
 
