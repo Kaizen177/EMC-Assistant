@@ -42,17 +42,12 @@ const chatPrompt = ai.definePrompt({
   output: {
     schema: AIPoweredChatOutputSchema,
   },
-  prompt: `{{
-    #if chatHistory
-}} 
+  prompt: `{{#if chatHistory}}
 Chat History:
 {{#each chatHistory}}
-{{#ifEq role \"user\"}}User: {{content}}{{
-      else
-}}Assistant: {{content}}{{
-      /ifEq}}
+{{#if (eq role "user")}}User: {{content}}{{else}}Assistant: {{content}}{{/if}}
 {{/each}}
-{{/if}} 
+{{/if}}
 User: {{{message}}}`,
   system: promptText,
 });
