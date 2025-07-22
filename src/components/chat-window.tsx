@@ -184,7 +184,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     <Textarea
                       ref={textareaRef}
                       placeholder="Type a message..."
-                      className="resize-none overflow-y-auto max-h-32"
+                      className="resize-none overflow-y-auto max-h-32 focus-visible:ring-0 focus-visible:ring-offset-0 focus:placeholder-transparent"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
