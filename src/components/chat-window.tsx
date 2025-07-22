@@ -57,7 +57,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       if(scrollableView) {
         setTimeout(() => {
           scrollableView.scrollTop = scrollableView.scrollHeight;
-        }, 100);
+        }, 0);
       }
     }
   };
@@ -161,7 +161,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     message={message}
                     isLastMessage={index === messages.length - 1}
                     isTyping={isLoading}
-                    onAnimationComplete={scrollToBottom}
+                    onAnimationUpdate={scrollToBottom}
                   />
                 </div>
                 {message.role === "user" && (

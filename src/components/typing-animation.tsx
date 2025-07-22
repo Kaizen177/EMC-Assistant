@@ -6,16 +6,16 @@ interface TypingAnimationProps {
   text: string;
   speed?: number;
   className?: string;
-  onComplete?: () => void;
+  onUpdate?: () => void;
 }
 
-const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onComplete }) => {
+const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate }) => {
   const [displayedText, setDisplayedText] = useState('');
-  const onCompleteRef = useRef(onComplete);
+  const onUpdateRef = useRef(onUpdate);
 
   useEffect(() => {
-    onCompleteRef.current = onComplete;
-  }, [onComplete]);
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   useEffect(() => {
     setDisplayedText('');
@@ -23,12 +23,12 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
       let i = 0;
       const intervalId = setInterval(() => {
         setDisplayedText(text.substring(0, i + 1));
+        if (onUpdateRef.current) {
+          onUpdateRef.current();
+        }
         i++;
         if (i >= text.length) {
           clearInterval(intervalId);
-          if (onCompleteRef.current) {
-            onCompleteRef.current();
-          }
         }
       }, speed);
 
