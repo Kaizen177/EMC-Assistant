@@ -34,10 +34,17 @@ export async function aiPoweredChat(input: AIPoweredChatInput): Promise<AIPowere
 
 const promptText = fs.readFileSync('./prompt.txt', 'utf-8');
 
+const InternalPromptSchema = AIPoweredChatInputSchema.extend({
+    chatHistory: z.array(z.object({
+        isUser: z.boolean(),
+        content: z.string(),
+    })).optional()
+})
+
 const chatPrompt = ai.definePrompt({
   name: 'aiPoweredChatPrompt',
   input: {
-    schema: AIPoweredChatInputSchema,
+    schema: InternalPromptSchema,
   },
   output: {
     schema: AIPoweredChatOutputSchema,
@@ -45,7 +52,7 @@ const chatPrompt = ai.definePrompt({
   prompt: `{{#if chatHistory}}
 Chat History:
 {{#each chatHistory}}
-{{#if (eq this.role "user")}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
+{{#if this.isUser}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
 {{/each}}
 {{/if}}
 User: {{{message}}}`,
@@ -59,9 +66,18 @@ const aiPoweredChatFlow = ai.defineFlow(
     outputSchema: AIPoweredChatOutputSchema,
   },
   async input => {
+    
+    const processedHistory = input.chatHistory?.map(item => ({
+        isUser: item.role === 'user',
+        content: item.content
+    }))
+
     const {
       output
-    } = await chatPrompt(input);
+    } = await chatPrompt({
+        message: input.message,
+        chatHistory: processedHistory
+    });
     return {
       response: output!.response
     };
