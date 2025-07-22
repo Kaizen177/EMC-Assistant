@@ -38,7 +38,8 @@ const InternalPromptSchema = AIPoweredChatInputSchema.extend({
     chatHistory: z.array(z.object({
         isUser: z.boolean(),
         content: z.string(),
-    })).optional()
+    })).optional(),
+    currentDateTime: z.string(),
 })
 
 const chatPrompt = ai.definePrompt({
@@ -56,7 +57,13 @@ Chat History:
 {{/each}}
 {{/if}}
 User: {{{message}}}`,
-  system: promptText,
+  system: `${promptText}
+
+<Instructions Additionnelles>
+- La date et l'heure actuelles sont : {{currentDateTime}}.
+- Tu dois impérativement répondre dans la langue de l'utilisateur.
+</Instructions Additionnelles>
+`,
 });
 
 const aiPoweredChatFlow = ai.defineFlow(
@@ -76,7 +83,8 @@ const aiPoweredChatFlow = ai.defineFlow(
       output
     } = await chatPrompt({
         message: input.message,
-        chatHistory: processedHistory
+        chatHistory: processedHistory,
+        currentDateTime: new Date().toString(),
     });
     return {
       response: output!.response
