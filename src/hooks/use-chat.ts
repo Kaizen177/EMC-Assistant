@@ -37,6 +37,7 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
 
       try {
         const chatHistoryForApi: AIPoweredChatInput['chatHistory'] = newMessages
+          .filter(msg => msg.id !== '0') // Do not include the initial message in the history for the AI
           .slice(-12) // Keep last 12 messages for memory
           .map(({ role, content }) => ({ role, content }));
 
@@ -51,11 +52,8 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
           content: result.response,
         };
         
-        // Let's add a small delay to simulate typing
-        setTimeout(() => {
-          setMessages((prev) => [...prev, assistantMessage]);
-          setIsLoading(false);
-        }, 500);
+        setMessages((prev) => [...prev, assistantMessage]);
+        setIsLoading(false);
 
       } catch (error) {
         console.error("Error with AI chat:", error);
