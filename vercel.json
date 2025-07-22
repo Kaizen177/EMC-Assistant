@@ -1,9 +1,4 @@
 
 {
-  "framework": "nextjs",
-  "functions": {
-    "app/api/genkit/**": {
-      "includeFiles": "prompt.txt"
-    }
-  }
+  "framework": "nextjs"
 }

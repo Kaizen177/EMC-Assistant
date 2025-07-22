@@ -11,8 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import * as fs from 'fs';
-import path from 'path';
+import { initialPromptAugmentation } from './initial-prompt-augmentation';
 
 const AIPoweredChatInputSchema = z.object({
   message: z.string().describe('The user message to the chatbot.'),
@@ -34,7 +33,7 @@ export async function aiPoweredChat(input: AIPoweredChatInput): Promise<AIPowere
   return aiPoweredChatFlow(input);
 }
 
-const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
+const promptText = initialPromptAugmentation();
 
 const InternalPromptSchema = AIPoweredChatInputSchema.extend({
     chatHistory: z.array(z.object({
