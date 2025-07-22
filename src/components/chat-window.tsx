@@ -1,6 +1,6 @@
 "use client";
 
-import { type FC, useEffect, useRef } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,12 +9,17 @@ import { X, Send, Bot, User, Loader2 } from "lucide-react";
 import { useChat } from "@/hooks/use-chat";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TypingAnimation from "./typing-animation";
+import { Textarea } from "./ui/textarea";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -36,6 +41,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     },
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -52,6 +58,24 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.handleSubmit(onSubmit)();
+    }
+  };
+  
+  const { watch } = form;
+  const messageValue = watch("message");
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`;
+    }
+  }, [messageValue]);
+
 
   return (
     <Card
@@ -112,7 +136,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   )}
                 >
                   {message.role === 'assistant' && !isLoading && index === messages.length - 1 ? (
-                    <TypingAnimation text={message.content} />
+                    <TypingAnimation text={message.content} speed={10}/>
                   ) : (
                     message.content
                   )}
@@ -142,11 +166,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t">
+      <CardFooter className="p-2 border-t items-end">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-full items-center space-x-2"
+            className="flex w-full items-end space-x-2"
           >
             <FormField
               control={form.control}
@@ -154,9 +178,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <FormControl>
-                    <Input
+                    <Textarea
+                      ref={textareaRef}
                       placeholder="Type a message..."
-                      className="rounded-full"
+                      className="resize-none"
+                      rows={1}
+                      onKeyDown={handleKeyDown}
                       {...field}
                       disabled={isLoading}
                       autoComplete="off"
