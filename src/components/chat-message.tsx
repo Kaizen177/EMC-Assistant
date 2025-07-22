@@ -47,7 +47,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           return <span key={`${lineKey}-text-${index}-${linkIndex}`} dangerouslySetInnerHTML={{ __html: linkPart }} />;
         });
       });
-      return isListItem ? <>{content}</> : <p className="my-4 first:mt-0 last:mb-0">{content}</p>;
+      return isListItem ? <>{content}</> : <p key={key} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
 
     const lines = text.split('\n');
@@ -58,7 +58,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
+          <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed'}>
             {list.items.map((item, index) => (
               <li key={`li-${index}`}>{renderLine(item, `li-item-${index}`, true)}</li>
             ))}

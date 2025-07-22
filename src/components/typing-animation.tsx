@@ -77,7 +77,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
                 return <span key={`${lineKey}-text-${index}-${linkIndex}`} dangerouslySetInnerHTML={{ __html: linkPart }} />;
             });
         });
-        return isListItem ? <>{content}</> : <p className="my-4 first:mt-0 last:mb-0">{content}</p>;
+        return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
 
     const lines = textToRender.split('\n');
@@ -88,7 +88,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
         if (list) {
             const ListTag = list.type;
             elements.push(
-                <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
+                <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed'}>
                     {list.items.map((item, index) => (
                         <li key={`li-${index}`}>{renderLine(item, `li-item-${index}`, true)}</li>
                     ))}
@@ -128,7 +128,8 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     return null;
   }
 
-  return <div className={cn("space-y-2", className)}>{renderContent(displayedText)}</div>;
+  const renderedElements = renderContent(displayedText);
+  return <div className={cn("space-y-2", className)}>{renderedElements}</div>;
 };
 
 export default TypingAnimation;
