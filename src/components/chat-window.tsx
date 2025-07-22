@@ -37,6 +37,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showInitialMessage, setShowInitialMessage] = useState(true);
+  const [isPlaceholderVisible, setIsPlaceholderVisible] = useState(true);
+
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -80,6 +82,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     }
   }, [messageValue]);
 
+  const handleFocus = () => {
+    setShowInitialMessage(false);
+    if (isPlaceholderVisible) {
+      setIsPlaceholderVisible(false);
+    }
+  };
 
   return (
     <Card
@@ -106,7 +114,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Veuillez vérifier les informations importantes.
+              L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
             </p>
           </div>
         </div>
@@ -199,11 +207,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <FormControl>
                     <Textarea
                       ref={textareaRef}
-                      placeholder="Écrivez votre message..."
+                      placeholder={isPlaceholderVisible ? "Écrivez votre message..." : ""}
                       className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50"
                       rows={1}
                       onKeyDown={handleKeyDown}
-                      onFocus={() => setShowInitialMessage(false)}
+                      onFocus={handleFocus}
                       {...field}
                       disabled={isLoading}
                       autoComplete="off"
