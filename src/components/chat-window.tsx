@@ -1,7 +1,7 @@
 
 "use client";
 
-import { type FC, useEffect, useRef } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -176,11 +176,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <FormControl>
                     <Textarea
                       ref={textareaRef}
-                      placeholder={isFocused ? "" : "Type a message..."}
-                      className="resize-none overflow-y-hidden focus-visible:ring-0 focus-visible:ring-offset-0"
+                      placeholder="Type a message..."
+                      className="resize-none overflow-y-hidden border focus-visible:ring-0 focus-visible:ring-offset-0"
                       rows={1}
-                      onFocus={() => setIsFocused(true)}
-                      onBlur={() => setIsFocused(false)}
                       onKeyDown={handleKeyDown}
                       {...field}
                       disabled={isLoading}
