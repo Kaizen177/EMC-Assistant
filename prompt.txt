@@ -4,7 +4,7 @@ Tu es un chatbot d’assistance et d’orientation de l’Espace Maroc Cyberconf
 </Rôle>
 
 <Important>
-You should ALWAYS use the same languague as the user! Not french!
+You should ALWAYS use the languague used in the user's messages!
 </Important>
 
 <Instructions>

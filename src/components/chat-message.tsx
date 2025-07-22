@@ -28,7 +28,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     lines.forEach((line, index) => {
       let processedLine = line;
   
-      // Handle lists
       const uliMatch = /^\s*[-*]\s(.*)/.exec(processedLine);
       const oliMatch = /^\s*\d+\.\s(.*)/.exec(processedLine);
   
@@ -61,14 +60,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
           htmlContent += '</ol>';
           inOList = false;
         }
-        htmlContent += `<p>${processedLine}</p>`;
+        if (processedLine.trim() === '') {
+            htmlContent += '<br/>';
+        } else {
+            htmlContent += `<p>${processedLine}</p>`;
+        }
       }
     });
   
     if (inUList) htmlContent += '</ul>';
     if (inOList) htmlContent += '</ol>';
   
-    // Handle bold
     htmlContent = htmlContent.replace(boldRegex, '<strong>$1</strong>');
   
     const parts = htmlContent.split(urlRegex);
@@ -82,7 +84,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline"
           >
             {part}
           </a>
@@ -93,7 +95,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   };
   
   if (message.role === 'assistant' && isTyping && isLastMessage) {
-    return <div />; // Render nothing for the placeholder assistant message while typing
+    return <div />; 
   }
   
   if (message.role === 'assistant' && isLastMessage && !isTyping) {

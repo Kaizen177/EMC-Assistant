@@ -80,7 +80,11 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
           htmlContent += '</ol>';
           inOList = false;
         }
-        htmlContent += `<p>${processedLine}</p>`;
+        if (processedLine.trim() === '') {
+            htmlContent += '<br/>';
+        } else {
+            htmlContent += `<p>${processedLine}</p>`;
+        }
       }
     });
   
@@ -100,7 +104,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline"
           >
             {part}
           </a>
