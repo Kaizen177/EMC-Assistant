@@ -1,7 +1,7 @@
 
 "use client";
 
-import { type FC, useEffect, useRef } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -35,7 +35,7 @@ const ChatFormSchema = z.object({
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
-  const { messages, isLoading, sendMessage } = useChat();
+  const { messages, isLoading, sendMessage, initialMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -52,7 +52,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, isLoading]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -123,6 +125,18 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
+            {messages.length === 0 && (
+                 <div className="flex items-end gap-2 justify-start">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="w-5 h-5" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3">
+                      {initialMessage.content}
+                    </div>
+                </div>
+            )}
             {messages.map((message, index) => (
               <div
                 key={message.id}
