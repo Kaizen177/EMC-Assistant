@@ -87,7 +87,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
                 key={message.id}
                 className={cn(
@@ -107,7 +107,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
                     message.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-none"
-                      : "bg-muted text-card-foreground rounded-bl-none"
+                      : "bg-muted text-card-foreground rounded-bl-none",
+                     message.role === 'assistant' && index === messages.length - 1 && "animate-typing-fast overflow-hidden whitespace-nowrap"
                   )}
                 >
                   {message.content}
