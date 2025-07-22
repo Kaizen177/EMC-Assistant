@@ -1,3 +1,4 @@
+
 "use client";
 
 import { type FC, useEffect, useRef, useState } from "react";
@@ -36,8 +37,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isPlaceholderVisible, setIsPlaceholderVisible] = useState(true);
-
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -80,12 +79,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       }
     }
   }, [messageValue]);
-
-  const handleFocus = () => {
-    if (isPlaceholderVisible) {
-      setIsPlaceholderVisible(false);
-    }
-  };
 
   return (
     <Card
@@ -205,11 +198,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <FormControl>
                     <Textarea
                       ref={textareaRef}
-                      placeholder={isPlaceholderVisible ? "Écrivez votre message..." : ""}
+                      placeholder={"Écrivez votre message..."}
                       className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50"
                       rows={1}
                       onKeyDown={handleKeyDown}
-                      onFocus={handleFocus}
                       {...field}
                       disabled={isLoading}
                       autoComplete="off"
