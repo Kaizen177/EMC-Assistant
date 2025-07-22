@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import TypingAnimation from "./typing-animation";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -92,8 +93,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 key={message.id}
                 className={cn(
                   "flex items-end gap-2",
-                  message.role === "user" ? "justify-end" : "justify-start",
-                  message.role === 'assistant' && index === messages.length -1 && "animate-in fade-in-25 slide-in-from-bottom-2"
+                  message.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
                 {message.role === "assistant" && (
@@ -111,7 +111,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       : "bg-muted text-card-foreground rounded-bl-none"
                   )}
                 >
-                  {message.content}
+                  {message.role === 'assistant' && !isLoading && index === messages.length - 1 ? (
+                    <TypingAnimation text={message.content} />
+                  ) : (
+                    message.content
+                  )}
                 </div>
                 {message.role === "user" && (
                   <Avatar className="w-8 h-8">
