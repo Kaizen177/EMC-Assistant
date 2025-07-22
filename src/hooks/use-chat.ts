@@ -1,7 +1,6 @@
 
 "use client";
 
-import { aiPoweredChat, type AIPoweredChatInput } from "@/ai/flows/ai-powered-chat";
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -10,6 +9,11 @@ export type Message = {
   role: "user" | "assistant";
   content: string;
 };
+
+type AIPoweredChatInput = {
+    message: string;
+    chatHistory: Array<{ role: 'user' | 'assistant'; content: string }>;
+}
 
 const initialMessage: Message = {
     id: '0',
@@ -37,15 +41,27 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
       setIsLoading(true);
 
       try {
-        const chatHistoryForApi: AIPoweredChatInput['chatHistory'] = newMessages
+        const chatHistoryForApi = newMessages
           .filter(msg => msg.id !== '0') 
           .slice(-12) 
           .map(({ role, content }) => ({ role, content }));
 
-        const result = await aiPoweredChat({
-          message,
-          chatHistory: chatHistoryForApi,
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message,
+            chatHistory: chatHistoryForApi,
+          }),
         });
+
+        if (!response.ok) {
+          throw new Error('API response was not ok.');
+        }
+
+        const result = await response.json();
         
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),

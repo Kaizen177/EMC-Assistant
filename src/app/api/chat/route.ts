@@ -1,17 +1,13 @@
+// src/app/api/chat/route.ts
 
-'use server';
+import { NextRequest, NextResponse } from 'next/server';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import fs from 'fs';
+import path from 'path';
 
-/**
- * @fileOverview AI-Powered Chat flow using Google Gemini API.
- *
- * - aiPoweredChat - A function that handles the chat interaction.
- * - AIPoweredChatInput - The input type for the aiPoweredChat function.
- * - AIPoweredChatOutput - The return type for the aiPoweredChat function.
- */
-
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-import { initialPromptAugmentation } from './initial-prompt-augmentation';
+// Read the prompt file once when the server starts
+const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
 
 const AIPoweredChatInputSchema = z.object({
   message: z.string().describe('The user message to the chatbot.'),
@@ -21,19 +17,9 @@ const AIPoweredChatInputSchema = z.object({
   })).optional().describe('The chat history between the user and the chatbot.'),
 });
 
-export type AIPoweredChatInput = z.infer<typeof AIPoweredChatInputSchema>;
-
 const AIPoweredChatOutputSchema = z.object({
   response: z.string().describe('The response from the chatbot.'),
 });
-
-export type AIPoweredChatOutput = z.infer<typeof AIPoweredChatOutputSchema>;
-
-export async function aiPoweredChat(input: AIPoweredChatInput): Promise<AIPoweredChatOutput> {
-  return aiPoweredChatFlow(input);
-}
-
-const promptText = initialPromptAugmentation();
 
 const InternalPromptSchema = AIPoweredChatInputSchema.extend({
     chatHistory: z.array(z.object({
@@ -41,7 +27,7 @@ const InternalPromptSchema = AIPoweredChatInputSchema.extend({
         content: z.string(),
     })).optional(),
     currentDate: z.string().optional(),
-})
+});
 
 const chatPrompt = ai.definePrompt({
   name: 'aiPoweredChatPrompt',
@@ -72,7 +58,7 @@ const aiPoweredChatFlow = ai.defineFlow(
     const processedHistory = input.chatHistory?.map(item => ({
         isUser: item.role === 'user',
         content: item.content
-    }))
+    }));
 
     const currentDate = new Date().toLocaleString('fr-FR', {
         weekday: 'long',
@@ -96,3 +82,28 @@ const aiPoweredChatFlow = ai.defineFlow(
     };
   }
 );
+
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
+
+    const result = await aiPoweredChatFlow({ message, chatHistory });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error in chat API route:', error);
+    
+    let errorMessage = 'An unknown error occurred.';
+    if (error instanceof z.ZodError) {
+        errorMessage = 'Invalid request body.';
+        return NextResponse.json({ error: errorMessage }, { status: 400 });
+    }
+    if (error instanceof Error) {
+        errorMessage = error.message;
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
+}
