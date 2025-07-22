@@ -36,7 +36,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [showInitialMessage, setShowInitialMessage] = useState(true);
   const [isPlaceholderVisible, setIsPlaceholderVisible] = useState(true);
 
 
@@ -83,7 +82,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   }, [messageValue]);
 
   const handleFocus = () => {
-    setShowInitialMessage(false);
     if (isPlaceholderVisible) {
       setIsPlaceholderVisible(false);
     }
@@ -113,7 +111,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 BETA
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
             </p>
           </div>
@@ -131,7 +129,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {showInitialMessage && messages.length === 0 && (
+            {messages.length === 0 && (
               <div className={cn("flex items-end gap-2 justify-start")}>
                  <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
