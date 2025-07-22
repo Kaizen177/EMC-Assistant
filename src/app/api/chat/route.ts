@@ -1,3 +1,4 @@
+
 // src/app/api/chat/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,7 +7,8 @@ import { z } from 'genkit';
 import fs from 'fs';
 import path from 'path';
 
-// Read the prompt file once when the server starts
+// Read the prompt file once when the serverless function initializes.
+// This is the stable and performant way to handle external files in a serverless environment.
 const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
 
 const AIPoweredChatInputSchema = z.object({
@@ -21,14 +23,18 @@ const AIPoweredChatOutputSchema = z.object({
   response: z.string().describe('The response from the chatbot.'),
 });
 
-const InternalPromptSchema = AIPoweredChatInputSchema.extend({
+// Define the schema for the prompt's input, including the processed history and current date.
+const InternalPromptSchema = z.object({
+    message: z.string(),
     chatHistory: z.array(z.object({
         isUser: z.boolean(),
         content: z.string(),
     })).optional(),
-    currentDate: z.string().optional(),
+    currentDate: z.string(),
 });
 
+// Define the Genkit prompt and flow *outside* the request handler.
+// This ensures they are created only once when the function initializes.
 const chatPrompt = ai.definePrompt({
   name: 'aiPoweredChatPrompt',
   input: {
@@ -37,14 +43,15 @@ const chatPrompt = ai.definePrompt({
   output: {
     schema: AIPoweredChatOutputSchema,
   },
+  system: promptText,
   prompt: `{{#if chatHistory}}
 Chat History:
 {{#each chatHistory}}
 {{#if this.isUser}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
 {{/each}}
 {{/if}}
+
 User: {{{message}}}`,
-  system: `${promptText}`,
 });
 
 const aiPoweredChatFlow = ai.defineFlow(
@@ -53,13 +60,14 @@ const aiPoweredChatFlow = ai.defineFlow(
     inputSchema: AIPoweredChatInputSchema,
     outputSchema: AIPoweredChatOutputSchema,
   },
-  async input => {
-    
+  async (input) => {
+    // Process chat history to match the prompt's expected format.
     const processedHistory = input.chatHistory?.map(item => ({
         isUser: item.role === 'user',
         content: item.content
     }));
 
+    // Get the current date and time.
     const currentDate = new Date().toLocaleString('fr-FR', {
         weekday: 'long',
         year: 'numeric',
@@ -70,40 +78,49 @@ const aiPoweredChatFlow = ai.defineFlow(
         second: '2-digit'
     });
 
-    const {
-      output
-    } = await chatPrompt({
+    // Call the pre-defined prompt with the processed input.
+    const { output } = await chatPrompt({
         message: input.message,
         chatHistory: processedHistory,
         currentDate,
     });
+    
+    if (!output) {
+      throw new Error('AI failed to generate a response.');
+    }
+
     return {
-      response: output!.response
+      response: output.response
     };
   }
 );
 
-
+// The main POST request handler.
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    // Validate the incoming request body.
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
 
+    // Execute the pre-defined Genkit flow.
     const result = await aiPoweredChatFlow({ message, chatHistory });
 
     return NextResponse.json(result);
   } catch (error) {
+    // Log the detailed error on the server for debugging.
     console.error('Error in chat API route:', error);
     
     let errorMessage = 'An unknown error occurred.';
+    let statusCode = 500;
+
     if (error instanceof z.ZodError) {
         errorMessage = 'Invalid request body.';
-        return NextResponse.json({ error: errorMessage }, { status: 400 });
-    }
-    if (error instanceof Error) {
+        statusCode = 400;
+    } else if (error instanceof Error) {
         errorMessage = error.message;
     }
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    // Return a JSON error response to the client.
+    return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }
