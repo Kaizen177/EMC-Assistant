@@ -1,6 +1,6 @@
 "use client";
 
-import { type FC, useEffect, useRef, useState } from "react";
+import { type FC, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -103,7 +103,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              L'IA peut être inexacte, veuillez vérifier les informations.
+              L'IA peut faire des erreurs. Vérifiez les informations importantes.
             </p>
           </div>
         </div>
