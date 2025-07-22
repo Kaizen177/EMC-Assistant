@@ -21,36 +21,33 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
-    const processPart = (part: string, key: number) => {
-      if (part.match(urlRegex)) {
-        const href = part.startsWith('www.') ? `http://${part}` : part;
-        return (
-          <a
-            key={key}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
-          >
-            {part}
-          </a>
-        );
-      }
-      
-      const boldParts = part.split(boldRegex);
-      return boldParts.map((boldPart, boldIndex) => {
-        if (boldIndex % 2 === 1) {
-          return <strong key={`${key}-${boldIndex}`}>{boldPart}</strong>;
-        }
-        return <span key={`${key}-${boldIndex}`} dangerouslySetInnerHTML={{ __html: boldPart }} />;
-      });
-    };
-
     const processLine = (line: string, keyPrefix: string) => {
-      const parts = line.split(urlRegex);
-      return parts.map((part, index) => processPart(part, index)).flat();
+      const parts = line.split(urlRegex).filter(Boolean);
+      return parts.map((part, index) => {
+        if (part.match(urlRegex)) {
+          const href = part.startsWith('www.') ? `http://${part}` : part;
+          return (
+            <a
+              key={`${keyPrefix}-link-${index}`}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-foreground bg-accent/80 border border-accent-foreground/30 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-primary hover:text-primary-foreground"
+            >
+              {part}
+            </a>
+          );
+        }
+        const boldParts = part.split(boldRegex).filter(Boolean);
+        return boldParts.map((boldPart, boldIndex) => {
+          if (boldIndex % 2 === 1 && part.includes(`**${boldPart}**`)) {
+            return <strong key={`${keyPrefix}-bold-${index}-${boldIndex}`}>{boldPart}</strong>;
+          }
+          return <span key={`${keyPrefix}-text-${index}-${boldIndex}`} dangerouslySetInnerHTML={{ __html: boldPart }} />;
+        });
+      }).flat();
     };
-
+    
     const lines = text.split('\n');
     const elements: (JSX.Element | string)[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
@@ -59,7 +56,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-3'}>
+          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4'}>
             {list.items.map((item, index) => (
               <li key={index}>{processLine(item, `li-${index}`)}</li>
             ))}
@@ -93,7 +90,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
 
     return elements.map((el, i) => {
         if(typeof el === 'string') {
-            return <p key={`p-${i}`} className="mb-3 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
+            return <p key={`p-${i}`} className="my-4 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
         }
         return el;
     });
