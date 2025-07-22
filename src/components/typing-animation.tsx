@@ -9,9 +9,10 @@ interface TypingAnimationProps {
   className?: string;
   onUpdate?: () => void;
   onComplete?: () => void;
+  isTyping?: boolean;
 }
 
-const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate, onComplete }) => {
+const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate, onComplete, isTyping = false }) => {
   const [displayedText, setDisplayedText] = useState('');
   const onUpdateRef = useRef(onUpdate);
   const onCompleteRef = useRef(onComplete);
@@ -45,90 +46,89 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
       return () => clearInterval(intervalId);
     }
   }, [text, speed]);
-
-  const renderContent = (text: string) => {
+  
+  const renderContent = (textToRender: string) => {
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
-    const processLine = (line: string, keyPrefix: string) => {
-      const parts = line.split(urlRegex).filter(Boolean);
-      return parts.map((part, index) => {
-        if (part.match(urlRegex)) {
-          const href = part.startsWith('www.') ? `http://${part}` : part;
-          return (
-            <a
-              key={`${keyPrefix}-link-${index}`}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-700 bg-green-100 border border-green-300 px-1.5 py-0.5 rounded-md transition-colors duration-200 hover:bg-green-700 hover:text-white"
-            >
-              {part}
-            </a>
-          );
-        }
-        const boldParts = part.split(boldRegex).filter(Boolean);
-        return boldParts.map((boldPart, boldIndex) => {
-          if (boldIndex % 2 === 1 && part.includes(`**${boldPart}**`)) {
-            return <strong key={`${keyPrefix}-bold-${index}-${boldIndex}`}>{boldPart}</strong>;
-          }
-          return <span key={`${keyPrefix}-text-${index}-${boldIndex}`} dangerouslySetInnerHTML={{ __html: boldPart }} />;
+    const renderLine = (line: string, lineKey: string, isListItem: boolean) => {
+        const parts = line.split(boldRegex).filter(Boolean);
+        const content = parts.map((part, index) => {
+            if (index % 2 === 1) {
+                return <strong key={`${lineKey}-bold-${index}`}>{part}</strong>;
+            }
+
+            const linkParts = part.split(urlRegex).filter(Boolean);
+            return linkParts.map((linkPart, linkIndex) => {
+                if (linkPart.match(urlRegex)) {
+                    const href = linkPart.startsWith('www.') ? `http://${linkPart}` : linkPart;
+                    return (
+                        <a
+                            key={`${lineKey}-link-${index}-${linkIndex}`}
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-700 bg-green-100 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:font-bold"
+                        >
+                            {linkPart}
+                        </a>
+                    );
+                }
+                return <span key={`${lineKey}-text-${index}-${linkIndex}`} dangerouslySetInnerHTML={{ __html: linkPart }} />;
+            });
         });
-      }).flat();
+        return isListItem ? <>{content}</> : <p className="my-4 first:mt-0 last:mb-0">{content}</p>;
     };
 
-    const lines = text.split('\n');
-    const elements: (JSX.Element | string)[] = [];
+    const lines = textToRender.split('\n');
+    const elements: JSX.Element[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
 
-    const flushList = () => {
-      if (list) {
-        const ListTag = list.type;
-        elements.push(
-          <ListTag key={`list-${elements.length}`} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
-            {list.items.map((item, index) => (
-              <li key={index}>{processLine(item, `li-${index}`)}</li>
-            ))}
-          </ListTag>
-        );
-        list = null;
-      }
+    const flushList = (key: string) => {
+        if (list) {
+            const ListTag = list.type;
+            elements.push(
+                <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
+                    {list.items.map((item, index) => (
+                        <li key={index}>{renderLine(item, `li-${index}`, true)}</li>
+                    ))}
+                </ListTag>
+            );
+            list = null;
+        }
     };
 
-    lines.forEach((line) => {
-      const uliMatch = /^\s*[-*]\s(.*)/.exec(line);
-      const oliMatch = /^\s*\d+\.\s(.*)/.exec(line);
+    lines.forEach((line, lineIndex) => {
+        const uliMatch = /^\s*[-*]\s(.*)/.exec(line);
+        const oliMatch = /^\s*\d+\.\s(.*)/.exec(line);
+        const key = `line-${lineIndex}`;
 
-      if (uliMatch) {
-        if (list?.type !== 'ul') flushList();
-        if (!list) list = { type: 'ul', items: [] };
-        list.items.push(uliMatch[1]);
-      } else if (oliMatch) {
-        if (list?.type !== 'ol') flushList();
-        if (!list) list = { type: 'ol', items: [] };
-        list.items.push(oliMatch[1]);
-      } else {
-        flushList();
-        if (line.trim() !== '') {
-           elements.push(line);
+        if (uliMatch) {
+            if (list?.type !== 'ul') flushList(`flushed-ul-${lineIndex}`);
+            if (!list) list = { type: 'ul', items: [] };
+            list.items.push(uliMatch[1]);
+        } else if (oliMatch) {
+            if (list?.type !== 'ol') flushList(`flushed-ol-${lineIndex}`);
+            if (!list) list = { type: 'ol', items: [] };
+            list.items.push(oliMatch[1]);
+        } else {
+            flushList(`flushed-p-${lineIndex}`);
+            if (line.trim() !== '') {
+                elements.push(<div key={key}>{renderLine(line, key, false)}</div>);
+            }
         }
-      }
     });
 
-    flushList();
-
-    const renderedElements = elements.map((el, i) => {
-        if(typeof el === 'string') {
-            return <p key={`p-${i}`} className="my-4 first:mt-0 last:mb-0">{processLine(el, `p-line-${i}`)}</p>
-        }
-        return el;
-    });
-
-    return <div className={cn("space-y-2", className)}>{renderedElements}</div>;
+    flushList(`final-flush`);
+    
+    return elements;
   };
+  
+  if (isTyping && !displayedText) {
+    return null;
+  }
 
-
-  return renderContent(displayedText);
+  return <div className={cn("space-y-2", className)}>{renderContent(displayedText)}</div>;
 };
 
 export default TypingAnimation;
