@@ -61,7 +61,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   };
 
   useEffect(() => {
-    scrollToBottom();
+    setTimeout(scrollToBottom, 100);
   }, [messages, isLoading]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
