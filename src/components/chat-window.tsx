@@ -168,7 +168,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t items-end">
+      <CardFooter className="p-2 border-t items-end shrink-0">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
