@@ -21,11 +21,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     const boldRegex = /\*\*(.*?)\*\*/g;
   
     const lines = text.split('\n');
-    let htmlContent = '';
     let inUList = false;
     let inOList = false;
   
-    lines.forEach((line, index) => {
+    const renderedLines = lines.map((line) => {
       let processedLine = line;
   
       const uliMatch = /^\s*[-*]\s(.*)/.exec(processedLine);
@@ -33,41 +32,42 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   
       if (uliMatch) {
         if (inOList) {
-          htmlContent += '</ol>';
           inOList = false;
+          return `</ol><ul><li>${uliMatch[1]}</li>`;
         }
         if (!inUList) {
-          htmlContent += '<ul>';
           inUList = true;
+          return `<ul><li>${uliMatch[1]}</li>`;
         }
-        htmlContent += `<li>${uliMatch[1]}</li>`;
+        return `<li>${uliMatch[1]}</li>`;
       } else if (oliMatch) {
         if (inUList) {
-          htmlContent += '</ul>';
           inUList = false;
+          return `</ul><ol><li>${oliMatch[1]}</li>`;
         }
         if (!inOList) {
-          htmlContent += '<ol>';
           inOList = true;
+          return `<ol><li>${oliMatch[1]}</li>`;
         }
-        htmlContent += `<li>${oliMatch[1]}</li>`;
+        return `<li>${oliMatch[1]}</li>`;
       } else {
+        let closingTags = '';
         if (inUList) {
-          htmlContent += '</ul>';
+          closingTags += '</ul>';
           inUList = false;
         }
         if (inOList) {
-          htmlContent += '</ol>';
+          closingTags += '</ol>';
           inOList = false;
         }
         if (processedLine.trim() === '') {
-            htmlContent += '<br/>';
-        } else {
-            htmlContent += `<p>${processedLine}</p>`;
+          return `${closingTags}<br/>`;
         }
+        return `${closingTags}<p>${processedLine}</p>`;
       }
     });
   
+    let htmlContent = renderedLines.join('');
     if (inUList) htmlContent += '</ul>';
     if (inOList) htmlContent += '</ol>';
   
@@ -84,7 +84,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline"
+            className="text-accent-foreground bg-accent px-1.5 py-0.5 rounded-md hover:underline font-bold"
           >
             {part}
           </a>
@@ -93,11 +93,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
-  
+
   if (message.role === 'assistant' && isTyping && isLastMessage) {
-    return <div />; 
+    return <div />;
   }
-  
+
   if (message.role === 'assistant' && isLastMessage && !isTyping) {
     return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} />;
   }
