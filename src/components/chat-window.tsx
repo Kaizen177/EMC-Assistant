@@ -55,13 +55,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     if (scrollAreaRef.current) {
       const scrollableView = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
       if(scrollableView) {
-        scrollableView.scrollTop = scrollableView.scrollHeight;
+        setTimeout(() => {
+          scrollableView.scrollTop = scrollableView.scrollHeight;
+        }, 100);
       }
     }
   };
 
   useEffect(() => {
-    setTimeout(scrollToBottom, 100);
+    scrollToBottom();
   }, [messages, isLoading]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -159,6 +161,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     message={message}
                     isLastMessage={index === messages.length - 1}
                     isTyping={isLoading}
+                    onAnimationComplete={scrollToBottom}
                   />
                 </div>
                 {message.role === "user" && (

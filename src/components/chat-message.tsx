@@ -12,9 +12,10 @@ interface ChatMessageProps {
   };
   isLastMessage: boolean;
   isTyping: boolean;
+  onAnimationComplete: () => void;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationComplete }) => {
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
 
   const renderContent = (text: string) => {
@@ -39,8 +40,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     });
   };
 
-  if (message.role === 'assistant' && isLastMessage) {
-    return <TypingAnimation text={message.content} />;
+  if (message.role === 'assistant' && isTyping && isLastMessage) {
+    return <div />; // Render nothing for the placeholder assistant message while typing
+  }
+  
+  if (message.role === 'assistant' && isLastMessage && !isTyping) {
+    return <TypingAnimation text={message.content} onComplete={onAnimationComplete} />;
   }
 
   return <div>{renderContent(message.content)}</div>;
