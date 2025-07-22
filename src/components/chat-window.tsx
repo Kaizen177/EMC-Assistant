@@ -20,6 +20,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TypingDots from "./typing-dots";
 import { Textarea } from "./ui/textarea";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -42,7 +43,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -112,55 +112,57 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         </Button>
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-y-auto">
-        <div className="p-4 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn(
-                "flex items-end gap-2",
-                message.role === "user" ? "justify-end" : "justify-start"
-              )}
-            >
-              {message.role === "assistant" && (
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex items-end gap-2",
+                  message.role === "user" ? "justify-end" : "justify-start"
+                )}
+              >
+                {message.role === "assistant" && (
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <Bot className="w-5 h-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+                <div
+                  className={cn(
+                    "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-br-none"
+                      : "bg-muted text-card-foreground rounded-bl-none"
+                  )}
+                >
+                  {message.content}
+                </div>
+                {message.role === "user" && (
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback>
+                      <User className="w-5 h-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-end gap-2 justify-start">
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     <Bot className="w-5 h-5" />
                   </AvatarFallback>
                 </Avatar>
-              )}
-              <div
-                className={cn(
-                  "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
-                  message.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-br-none"
-                    : "bg-muted text-card-foreground rounded-bl-none"
-                )}
-              >
-                {message.content}
+                <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
+                  <TypingDots />
+                </div>
               </div>
-              {message.role === "user" && (
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback>
-                    <User className="w-5 h-5" />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex items-end gap-2 justify-start">
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  <Bot className="w-5 h-5" />
-                </AvatarFallback>
-              </Avatar>
-              <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
-                <TypingDots />
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </ScrollArea>
       </CardContent>
       <CardFooter className="p-2 border-t">
         <Form {...form}>
@@ -177,7 +179,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     <Textarea
                       ref={textareaRef}
                       placeholder="Type a message..."
-                      className="resize-none overflow-y-hidden border focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 max-h-[120px] overflow-y-auto"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
