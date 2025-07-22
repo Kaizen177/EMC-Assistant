@@ -71,10 +71,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const messageValue = watch("message");
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Reset height to recalculate
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = `${scrollHeight}px`;
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto'; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set to scroll height
     }
   }, [messageValue]);
 
@@ -111,64 +111,62 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <X className="w-5 h-5" />
         </Button>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={message.id}
-                className={cn(
-                  "flex items-end gap-2",
-                  message.role === "user" ? "justify-end" : "justify-start"
-                )}
-              >
-                {message.role === "assistant" && (
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      <Bot className="w-5 h-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-                <div
-                  className={cn(
-                    "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
-                    message.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-none"
-                      : "bg-muted text-card-foreground rounded-bl-none"
-                  )}
-                >
-                  {message.role === 'assistant' && isLoading && index === messages.length -1 ? (
-                    <TypingAnimation text={message.content} speed={10}/>
-                  ) : message.role === 'assistant' && index === messages.length - 1 ? (
-                    <TypingAnimation text={message.content} speed={10}/>
-                  ) : (
-                    message.content
-                  )}
-                </div>
-                {message.role === "user" && (
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback>
-                      <User className="w-5 h-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex items-end gap-2 justify-start">
+      <CardContent className="flex-1 p-0 overflow-y-auto">
+        <div className="p-4 space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={message.id}
+              className={cn(
+                "flex items-end gap-2",
+                message.role === "user" ? "justify-end" : "justify-start"
+              )}
+            >
+              {message.role === "assistant" && (
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     <Bot className="w-5 h-5" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
-                  <TypingDots />
-                </div>
+              )}
+              <div
+                className={cn(
+                  "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-none"
+                    : "bg-muted text-card-foreground rounded-bl-none"
+                )}
+              >
+                {message.role === 'assistant' && isLoading && index === messages.length -1 ? (
+                  <TypingAnimation text={message.content} speed={10}/>
+                ) : message.role === 'assistant' && index === messages.length - 1 ? (
+                  <TypingAnimation text={message.content} speed={10}/>
+                ) : (
+                  message.content
+                )}
               </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
+              {message.role === "user" && (
+                <Avatar className="w-8 h-8">
+                  <AvatarFallback>
+                    <User className="w-5 h-5" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex items-end gap-2 justify-start">
+              <Avatar className="w-8 h-8">
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  <Bot className="w-5 h-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
+                <TypingDots />
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </CardContent>
       <CardFooter className="p-2 border-t">
         <Form {...form}>
@@ -185,7 +183,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <Textarea
                     ref={textareaRef}
                     placeholder="Type a message..."
-                    className="resize-none min-h-[40px] focus:placeholder-transparent"
+                    className="resize-none overflow-y-hidden focus-visible:ring-0 focus-visible:ring-offset-0 border-0"
                     rows={1}
                     onKeyDown={handleKeyDown}
                     {...field}
