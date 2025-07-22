@@ -1,7 +1,7 @@
 
 "use client";
 
-import { type FC, useEffect, useRef, useState } from "react";
+import { type FC, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TypingDots from "./typing-dots";
 import { Textarea } from "./ui/textarea";
 import { ScrollArea } from "./ui/scroll-area";
+import ChatMessage from "./chat-message";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -101,7 +102,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             <div className="flex items-center gap-2">
               <p className="text-lg font-semibold">EMC Assistant</p>
               <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
-                BETA
+                BETA1
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground">
@@ -122,19 +123,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
-            {messages.length === 0 && (
-              <div className={cn("flex items-end gap-2 justify-start")}>
-                 <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      <Bot className="w-5 h-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                <div className={cn("max-w-[75%] rounded-2xl px-4 py-2 text-sm", "bg-muted text-card-foreground rounded-bl-none")}>
-                  Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?
-                </div>
-              </div>
-            )}
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
                 key={message.id}
                 className={cn(
@@ -157,7 +146,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       : "bg-muted text-card-foreground rounded-bl-none"
                   )}
                 >
-                  {message.content}
+                  <ChatMessage 
+                    message={message}
+                    isLastMessage={index === messages.length -1}
+                    isTyping={isLoading}
+                  />
                 </div>
                 {message.role === "user" && (
                   <Avatar className="w-8 h-8">
@@ -213,7 +206,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             <Button
               type="submit"
               size="icon"
-              className="flex-shrink-0"
+              className="flex-shrink-0 rounded-md"
               disabled={isLoading || !messageValue}
               aria-label="Send message"
             >

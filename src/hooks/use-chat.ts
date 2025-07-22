@@ -10,7 +10,13 @@ export type Message = {
   content: string;
 };
 
-export const useChat = (initialMessages: Message[] = []) => {
+const initialMessage: Message = {
+    id: '0',
+    role: 'assistant',
+    content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
+};
+
+export const useChat = (initialMessages: Message[] = [initialMessage]) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -38,13 +44,19 @@ export const useChat = (initialMessages: Message[] = []) => {
           message,
           chatHistory: chatHistoryForApi,
         });
-
+        
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: "assistant",
           content: result.response,
         };
-        setMessages((prev) => [...prev, assistantMessage]);
+        
+        // Let's add a small delay to simulate typing
+        setTimeout(() => {
+          setMessages((prev) => [...prev, assistantMessage]);
+          setIsLoading(false);
+        }, 500);
+
       } catch (error) {
         console.error("Error with AI chat:", error);
         toast({
@@ -54,8 +66,6 @@ export const useChat = (initialMessages: Message[] = []) => {
         });
         // Remove the user message that caused the error
         setMessages(prev => prev.slice(0, -1));
-
-      } finally {
         setIsLoading(false);
       }
     },
