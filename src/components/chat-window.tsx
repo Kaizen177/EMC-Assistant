@@ -135,7 +135,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       : "bg-muted text-card-foreground rounded-bl-none"
                   )}
                 >
-                  {message.role === 'assistant' && !isLoading && index === messages.length - 1 ? (
+                  {message.role === 'assistant' && isLoading && index === messages.length -1 ? (
+                    <TypingAnimation text={message.content} speed={10}/>
+                  ) : message.role === 'assistant' && index === messages.length - 1 ? (
                     <TypingAnimation text={message.content} speed={10}/>
                   ) : (
                     message.content
@@ -181,7 +183,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     <Textarea
                       ref={textareaRef}
                       placeholder="Type a message..."
-                      className="resize-none"
+                      className="resize-none overflow-y-auto"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
