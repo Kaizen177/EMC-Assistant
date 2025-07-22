@@ -38,7 +38,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-700 bg-green-100 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:font-bold"
+                className="text-green-700 bg-green-100/50 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:underline"
               >
                 {linkPart}
               </a>
@@ -60,7 +60,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
         elements.push(
           <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0'}>
             {list.items.map((item, index) => (
-              <li key={index}>{renderLine(item, `li-${index}`, true)}</li>
+              <li key={`li-${index}`}>{renderLine(item, `li-item-${index}`, true)}</li>
             ))}
           </ListTag>
         );
