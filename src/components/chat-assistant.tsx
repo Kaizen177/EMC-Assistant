@@ -19,7 +19,12 @@ export default function ChatAssistant() {
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 z-[1000] md:bottom-8 md:right-8">
+      <div
+        className={cn(
+          "fixed bottom-5 right-5 z-[1000] transition-all duration-300 md:bottom-8 md:right-8",
+          isOpen ? "opacity-0 scale-75 pointer-events-none" : "opacity-100 scale-100"
+        )}
+      >
         <ChatBubble isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
       </div>
 
