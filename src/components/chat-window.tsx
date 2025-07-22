@@ -111,7 +111,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <X className="w-5 h-5" />
         </Button>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto p-0">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
             {messages.map((message, index) => (
@@ -185,7 +185,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     <Textarea
                       ref={textareaRef}
                       placeholder="Type a message..."
-                      className="resize-none overflow-y-auto focus:placeholder-transparent"
+                      className="resize-none overflow-y-auto focus-visible:ring-0 focus:placeholder-transparent ring-0 focus:ring-0 border-0 shadow-none"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
