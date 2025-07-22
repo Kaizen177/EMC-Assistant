@@ -213,7 +213,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             <Button
               type="submit"
               size="icon"
-              className="rounded-full flex-shrink-0"
+              className="flex-shrink-0"
               disabled={isLoading || !messageValue}
               aria-label="Send message"
             >
