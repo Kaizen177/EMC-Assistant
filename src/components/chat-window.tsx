@@ -33,13 +33,7 @@ const ChatFormSchema = z.object({
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
-  const { messages, isLoading, sendMessage } = useChat([
-    {
-      id: "init",
-      role: "assistant",
-      content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
-    },
-  ]);
+  const { messages, isLoading, sendMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -73,7 +67,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto'; 
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      const scrollHeight = textarea.scrollHeight;
+      const maxHeight = 120;
+      if (scrollHeight > maxHeight) {
+        textarea.style.height = `${maxHeight}px`;
+        textarea.style.overflowY = 'auto';
+      } else {
+        textarea.style.height = `${scrollHeight}px`;
+        textarea.style.overflowY = 'hidden';
+      }
     }
   }, [messageValue]);
 
@@ -120,6 +122,18 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
+            {messages.length === 0 && (
+              <div className={cn("flex items-end gap-2 justify-start")}>
+                 <Avatar className="w-8 h-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <Bot className="w-5 h-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                <div className={cn("max-w-[75%] rounded-2xl px-4 py-2 text-sm", "bg-muted text-card-foreground rounded-bl-none")}>
+                  Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?
+                </div>
+              </div>
+            )}
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -184,8 +198,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <FormControl>
                     <Textarea
                       ref={textareaRef}
-                      placeholder="Écrivez un message..."
-                      className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 max-h-[120px] overflow-y-auto"
+                      placeholder="Écrivez votre message..."
+                      className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
