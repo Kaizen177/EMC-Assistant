@@ -39,7 +39,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     });
   };
 
-  if (message.role === 'assistant' && isLastMessage && isTyping) {
+  if (message.role === 'assistant' && isLastMessage) {
     return <TypingAnimation text={message.content} />;
   }
 

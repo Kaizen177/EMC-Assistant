@@ -101,8 +101,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <div>
             <div className="flex items-center gap-2">
               <p className="text-lg font-semibold">EMC Assistant</p>
-              <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
-                BETA1
+              <span className="text-xs font-semibold text-[hsl(var(--beta))] bg-destructive/10 px-1.5 py-0.5 rounded-md">
+                BETA
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground">

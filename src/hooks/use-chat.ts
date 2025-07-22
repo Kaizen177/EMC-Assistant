@@ -35,6 +35,13 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
       setMessages(newMessages);
       setIsLoading(true);
 
+      const assistantMessageTemplate: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "",
+      };
+      setMessages((prev) => [...prev, assistantMessageTemplate]);
+
       try {
         const chatHistoryForApi: AIPoweredChatInput['chatHistory'] = newMessages
           .filter(msg => msg.id !== '0') // Do not include the initial message in the history for the AI
@@ -52,7 +59,7 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
           content: result.response,
         };
         
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages((prev) => [...prev.slice(0, -1), assistantMessage]);
         setIsLoading(false);
 
       } catch (error) {
@@ -62,8 +69,8 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
           title: "Uh oh! Something went wrong.",
           description: "There was a problem with your request. Please try again.",
         });
-        // Remove the user message that caused the error
-        setMessages(prev => prev.slice(0, -1));
+        // Remove the user message and assistant template that caused the error
+        setMessages(prev => prev.slice(0, -2));
         setIsLoading(false);
       }
     },
