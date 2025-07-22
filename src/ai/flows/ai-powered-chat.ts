@@ -40,6 +40,7 @@ const InternalPromptSchema = AIPoweredChatInputSchema.extend({
         isUser: z.boolean(),
         content: z.string(),
     })).optional(),
+    currentDate: z.string().optional(),
 })
 
 const chatPrompt = ai.definePrompt({
@@ -73,11 +74,22 @@ const aiPoweredChatFlow = ai.defineFlow(
         content: item.content
     }))
 
+    const currentDate = new Date().toLocaleString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
     const {
       output
     } = await chatPrompt({
         message: input.message,
         chatHistory: processedHistory,
+        currentDate,
     });
     return {
       response: output!.response
