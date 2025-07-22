@@ -72,9 +72,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      const maxHeight = 128; // Corresponds to max-h-32
-      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [messageValue]);
 
@@ -86,7 +84,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         className
       )}
     >
-      <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
+      <CardHeader className="flex flex-row items-center justify-between p-4 border-b flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="relative">
             <Avatar>
@@ -170,7 +168,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t">
+      <CardFooter className="p-2 border-t flex-shrink-0">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -185,7 +183,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     <Textarea
                       ref={textareaRef}
                       placeholder="Type a message..."
-                      className="resize-none overflow-y-auto focus-visible:ring-0 focus:placeholder-transparent ring-0 focus:ring-0 border-0 shadow-none"
+                      className="resize-none overflow-y-auto focus-visible:ring-0 focus:placeholder-transparent ring-0 focus:ring-0 border-0 shadow-none max-h-32"
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
