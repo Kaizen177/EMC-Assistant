@@ -109,7 +109,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <X className="w-5 h-5" />
         </Button>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-hidden">
+      <CardContent className="flex-1 p-0 overflow-y-auto">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
             {messages.map((message, index) => (
@@ -168,7 +168,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t items-end shrink-0">
+      <CardFooter className="p-2 border-t items-end">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
