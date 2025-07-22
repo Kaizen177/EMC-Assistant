@@ -72,7 +72,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`;
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const maxHeight = 128; // Corresponds to max-h-32
+      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     }
   }, [messageValue]);
 
@@ -168,7 +170,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2 border-t items-start">
+      <CardFooter className="p-2 border-t">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
