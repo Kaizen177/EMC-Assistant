@@ -4,7 +4,7 @@ import { type FC, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X, Send, Bot, User, Loader2 } from "lucide-react";
+import { X, Send, Bot, User } from "lucide-react";
 
 import { useChat } from "@/hooks/use-chat";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TypingAnimation from "./typing-animation";
 import { Textarea } from "./ui/textarea";
+import TypingDots from "./typing-dots";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -66,12 +67,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     }
   };
   
-  const { watch } = form;
+  const { watch, control, setValue } = form;
   const messageValue = watch("message");
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset height
+      textareaRef.current.style.height = 'auto'; // Reset height to recalculate
       const scrollHeight = textareaRef.current.scrollHeight;
       textareaRef.current.style.height = `${scrollHeight}px`;
     }
@@ -110,7 +111,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <X className="w-5 h-5" />
         </Button>
       </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto p-0">
+      <CardContent className="flex-1 p-0 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
             {messages.map((message, index) => (
@@ -161,7 +162,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  <TypingDots />
                 </div>
               </div>
             )}
@@ -176,23 +177,23 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
             className="flex w-full items-end space-x-2"
           >
             <FormField
-              control={form.control}
+              control={control}
               name="message"
               render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl>
-                    <Textarea
-                      ref={textareaRef}
-                      placeholder="Type a message..."
-                      className="resize-none overflow-y-auto max-h-32 focus-visible:ring-0 focus-visible:ring-offset-0 focus:placeholder-transparent"
-                      rows={1}
-                      onKeyDown={handleKeyDown}
-                      {...field}
-                      disabled={isLoading}
-                      autoComplete="off"
-                    />
-                  </FormControl>
-                </FormItem>
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Textarea
+                    ref={textareaRef}
+                    placeholder="Type a message..."
+                    className="resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:placeholder-transparent"
+                    rows={1}
+                    onKeyDown={handleKeyDown}
+                    {...field}
+                    disabled={isLoading}
+                    autoComplete="off"
+                  />
+                </FormControl>
+              </FormItem>
               )}
             />
             <Button
