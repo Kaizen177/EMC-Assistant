@@ -44,11 +44,11 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
 
     return (
         <div className="p-4 space-y-4" dir={isArabic ? 'rtl' : 'ltr'}>
-            <div className="flex justify-between items-center mb-2 border-b pb-2">
+            <div className="flex justify-between items-center mb-2 pb-2 border-b">
                  <div className="flex gap-1">
-                    <Button variant={language === 'fr' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('fr')}>Fr</Button>
-                    <Button variant={language === 'en' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('en')}>En</Button>
-                    <Button variant={language === 'ar' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('ar')}>Ar</Button>
+                    <Button variant={language === 'fr' ? 'default' : 'ghost'} size="sm" className="h-7 px-2 text-xs" onClick={() => setLanguage('fr')}>Français</Button>
+                    <Button variant={language === 'en' ? 'default' : 'ghost'} size="sm" className="h-7 px-2 text-xs" onClick={() => setLanguage('en')}>English</Button>
+                    <Button variant={language === 'ar' ? 'default' : 'ghost'} size="sm" className="h-7 px-2 text-xs" onClick={() => setLanguage('ar')}>العربية</Button>
                 </div>
                 <Button 
                     variant="ghost" 
@@ -69,7 +69,7 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
             </div>
 
             <div className="h-24 flex items-center">
-                <p className="text-sm font-semibold text-card-foreground">
+                <p className="text-sm font-normal text-card-foreground">
                     {DASS21_QUESTIONS[language][currentQuestionIndex]}
                 </p>
             </div>
