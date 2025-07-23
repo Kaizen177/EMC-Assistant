@@ -53,11 +53,13 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                 <X className="h-4 w-4" />
                 <span className="sr-only">Cancel Test</span>
             </Button>
-             <div className="flex justify-center gap-2 mb-4 border-b pb-4">
-                <Button variant={language === 'fr' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('fr')}>Français</Button>
-                <Button variant={language === 'en' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('en')}>English</Button>
-                <Button variant={language === 'ar' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('ar')}>العربية</Button>
+            
+            <div className="flex justify-center gap-2 mb-2 border-b pb-2">
+                <Button variant={language === 'fr' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('fr')}>Français</Button>
+                <Button variant={language === 'en' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('en')}>English</Button>
+                <Button variant={language === 'ar' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('ar')}>العربية</Button>
             </div>
+            
             <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">
                     {labels.question} {currentQuestionIndex + 1} {labels.of} {DASS21_QUESTIONS[language].length}
@@ -71,23 +73,25 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
-                <Button variant="outline" onClick={() => handleAnswer(1)}>1</Button>
-                <Button variant="outline" onClick={() => handleAnswer(2)}>2</Button>
-                <Button variant="outline" onClick={() => handleAnswer(3)}>3</Button>
-            </div>
-             <div className="mt-4 flex items-center">
+            <div className="flex items-center gap-2">
                  <Button 
                     variant="ghost" 
+                    size="icon"
                     onClick={handleBack} 
                     disabled={currentQuestionIndex === 0}
-                    className="text-muted-foreground"
+                    className="h-9 w-9 text-muted-foreground flex-shrink-0"
+                    aria-label={labels.back}
                 >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {labels.back}
+                    <ArrowLeft className="h-5 w-5" />
                 </Button>
+                <div className="grid grid-cols-4 gap-2 w-full">
+                    <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(1)}>1</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(2)}>2</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(3)}>3</Button>
+                </div>
             </div>
+             
              <div className={cn("text-xs text-muted-foreground pt-2 space-y-1 border-t mt-4", isArabic ? "text-right" : "text-left")}>
                 <p><b>0</b> = {labels.option0}</p>
                 <p><b>1</b> = {labels.option1}</p>
