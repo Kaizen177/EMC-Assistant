@@ -7,10 +7,6 @@ import { z } from 'genkit';
 import fs from 'fs';
 import path from 'path';
 
-// Read the prompt file once when the serverless function initializes.
-// This is the stable and performant way to handle external files in a serverless environment.
-const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
-
 const AIPoweredChatInputSchema = z.object({
   message: z.string().describe('The user message to the chatbot.'),
   chatHistory: z.array(z.object({
@@ -34,68 +30,6 @@ const InternalPromptSchema = z.object({
     currentDate: z.string(),
 });
 
-// Define the Genkit prompt and flow *outside* the request handler.
-// This ensures they are created only once when the function initializes.
-const chatPrompt = ai.definePrompt({
-  name: 'aiPoweredChatPrompt',
-  input: {
-    schema: InternalPromptSchema,
-  },
-  output: {
-    schema: AIPoweredChatOutputSchema,
-  },
-  system: promptText,
-  prompt: `{{#if chatHistory}}
-Chat History:
-{{#each chatHistory}}
-{{#if this.isUser}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
-{{/each}}
-{{/if}}
-
-User: {{{message}}}`,
-});
-
-const aiPoweredChatFlow = ai.defineFlow(
-  {
-    name: 'aiPoweredChatFlow',
-    inputSchema: AIPoweredChatInputSchema,
-    outputSchema: AIPoweredChatOutputSchema,
-  },
-  async (input) => {
-    // Process chat history to match the prompt's expected format.
-    const processedHistory = input.chatHistory?.map(item => ({
-        isUser: item.role === 'user',
-        content: item.content
-    }));
-
-    // Get the current date and time.
-    const currentDate = new Date().toLocaleString('fr-FR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-
-    // Call the pre-defined prompt with the processed input.
-    const { output } = await chatPrompt({
-        message: input.message,
-        chatHistory: processedHistory,
-        currentDate,
-    });
-    
-    if (!output) {
-      throw new Error('AI failed to generate a response.');
-    }
-
-    return {
-      response: output.response
-    };
-  }
-);
-
 // The main POST request handler.
 export async function POST(req: NextRequest) {
   try {
@@ -109,7 +43,70 @@ export async function POST(req: NextRequest) {
     // Validate the incoming request body for actual chat messages.
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
 
-    // Execute the pre-defined Genkit flow.
+    // Read the prompt file on every request to ensure the latest version is used.
+    const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
+
+    const chatPrompt = ai.definePrompt({
+      name: 'aiPoweredChatPrompt',
+      input: {
+        schema: InternalPromptSchema,
+      },
+      output: {
+        schema: AIPoweredChatOutputSchema,
+      },
+      system: promptText,
+      prompt: `{{#if chatHistory}}
+Chat History:
+{{#each chatHistory}}
+{{#if this.isUser}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
+{{/each}}
+{{/if}}
+
+User: {{{message}}}`,
+    });
+
+    const aiPoweredChatFlow = ai.defineFlow(
+      {
+        name: 'aiPoweredChatFlow',
+        inputSchema: AIPoweredChatInputSchema,
+        outputSchema: AIPoweredChatOutputSchema,
+      },
+      async (input) => {
+        // Process chat history to match the prompt's expected format.
+        const processedHistory = input.chatHistory?.map(item => ({
+            isUser: item.role === 'user',
+            content: item.content
+        }));
+
+        // Get the current date and time.
+        const currentDate = new Date().toLocaleString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        // Call the pre-defined prompt with the processed input.
+        const { output } = await chatPrompt({
+            message: input.message,
+            chatHistory: processedHistory,
+            currentDate,
+        });
+        
+        if (!output) {
+          throw new Error('AI failed to generate a response.');
+        }
+
+        return {
+          response: output.response
+        };
+      }
+    );
+
+    // Execute the Genkit flow.
     const result = await aiPoweredChatFlow({ message, chatHistory });
 
     return NextResponse.json(result);
