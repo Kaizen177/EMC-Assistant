@@ -12,7 +12,7 @@ import { X, Undo2 } from "lucide-react";
 
 interface Dass21TestProps {
     onComplete: (results: number[], language: Language) => void;
-    onCancel: () => void;
+    onCancel: (language: Language) => void;
 }
 
 const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
@@ -54,7 +54,7 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                     variant="ghost" 
                     size="icon" 
                     className="h-6 w-6"
-                    onClick={onCancel}
+                    onClick={() => onCancel(language)}
                 >
                     <X className="h-4 w-4" />
                     <span className="sr-only">Cancel Test</span>

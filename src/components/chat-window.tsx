@@ -72,12 +72,17 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     setIsTestActive(false);
   };
   
-  const handleCancelTest = () => {
+  const handleCancelTest = (language: Language) => {
+    const cancellationMessages = {
+      fr: "L'évaluation a été annulée.",
+      en: "The assessment has been cancelled.",
+      ar: "تم إلغاء التقييم.",
+    }
     setIsTestActive(false);
     addMessage({
       id: Date.now().toString(),
       role: 'assistant',
-      content: "L'évaluation a été annulée."
+      content: cancellationMessages[language]
     });
   };
 
