@@ -5,7 +5,7 @@ import { type FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X, Send, Bot, User } from "lucide-react";
+import { X, Send, Bot, User, AlertCircle } from "lucide-react";
 
 import { useChat } from "@/hooks/use-chat";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,12 @@ import TypingDots from "./typing-dots";
 import { Textarea } from "./ui/textarea";
 import { ScrollArea } from "./ui/scroll-area";
 import ChatMessage from "./chat-message";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -127,9 +133,23 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 BETA
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
-            </p>
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <p className="text-[11px] ">Online</p>
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <AlertCircle className="w-3 h-3" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="max-w-[200px] text-center"
+                  >
+                    L'IA peut faire des erreurs. Veuillez vérifier les
+                    informations importantes.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
         </div>
         <Button
