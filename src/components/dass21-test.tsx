@@ -75,7 +75,13 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
             </div>
 
             <div className="flex items-center gap-2">
-                 <Button 
+                <div className="grid grid-cols-4 gap-2 w-full">
+                    <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(1)}>1</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(2)}>2</Button>
+                    <Button variant="outline" onClick={() => handleAnswer(3)}>3</Button>
+                </div>
+                <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={handleBack} 
@@ -85,12 +91,6 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                 >
                     <Undo2 className="h-5 w-5" />
                 </Button>
-                <div className="grid grid-cols-4 gap-2 w-full">
-                    <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
-                    <Button variant="outline" onClick={() => handleAnswer(1)}>1</Button>
-                    <Button variant="outline" onClick={() => handleAnswer(2)}>2</Button>
-                    <Button variant="outline" onClick={() => handleAnswer(3)}>3</Button>
-                </div>
             </div>
              
              <div className={cn("text-xs text-muted-foreground pt-2 space-y-1 border-t mt-4", isArabic ? "text-right" : "text-left")}>
