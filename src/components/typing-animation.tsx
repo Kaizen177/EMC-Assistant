@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
-import { PlayCircle } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { isArabic } from '@/lib/utils';
 
 interface TypingAnimationProps {
@@ -104,10 +104,15 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
                     </div>
                 )}
                 {showButton &&
-                    <div className="mt-4">
-                        <Button variant="outline" onClick={handleStartTestClick} className="w-full justify-start">
-                             <PlayCircle className="mr-2 h-4 w-4" />
-                            Commencer l'évaluation
+                     <div className="mt-4 flex justify-center">
+                        <Button 
+                            variant="default" 
+                            size="icon" 
+                            onClick={handleStartTestClick} 
+                            className="w-12 h-12 rounded-full transform hover:scale-110 transition-transform duration-200"
+                            aria-label="Start assessment"
+                        >
+                            <Play className="w-6 h-6" />
                         </Button>
                     </div>
                 }
