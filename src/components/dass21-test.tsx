@@ -43,21 +43,22 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
     const isArabic = language === 'ar';
 
     return (
-        <div className="p-4 space-y-4 relative" dir={isArabic ? 'rtl' : 'ltr'}>
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="absolute top-2 right-2 h-6 w-6"
-                onClick={onCancel}
-            >
-                <X className="h-4 w-4" />
-                <span className="sr-only">Cancel Test</span>
-            </Button>
-            
-            <div className="flex justify-center gap-2 mb-2 border-b pb-2">
-                <Button variant={language === 'fr' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('fr')}>Français</Button>
-                <Button variant={language === 'en' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('en')}>English</Button>
-                <Button variant={language === 'ar' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('ar')}>العربية</Button>
+        <div className="p-4 space-y-4" dir={isArabic ? 'rtl' : 'ltr'}>
+            <div className="flex justify-between items-center mb-2 border-b pb-2">
+                 <div className="flex gap-1">
+                    <Button variant={language === 'fr' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('fr')}>Fr</Button>
+                    <Button variant={language === 'en' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('en')}>En</Button>
+                    <Button variant={language === 'ar' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-2" onClick={() => setLanguage('ar')}>Ar</Button>
+                </div>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    onClick={onCancel}
+                >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Cancel Test</span>
+                </Button>
             </div>
             
             <div className="space-y-2">
