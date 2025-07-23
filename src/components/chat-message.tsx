@@ -4,6 +4,7 @@
 
 import React from 'react';
 import TypingAnimation from './typing-animation';
+import { Button } from './ui/button';
 
 interface ChatMessageProps {
   message: {
@@ -14,10 +15,31 @@ interface ChatMessageProps {
   isTyping: boolean;
   onAnimationUpdate: () => void;
   onAnimationComplete: () => void;
+  onStartTest: () => void;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate, onAnimationComplete }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate, onAnimationComplete, onStartTest }) => {
+  
+  const handleStartTestClick = () => {
+    onStartTest();
+  };
+  
   const renderContent = (text: string) => {
+    if (text.includes('[START_DASS21_TEST]')) {
+        const parts = text.split('[START_DASS21_TEST]');
+        return (
+            <div className="space-y-4">
+                {parts.map((part, index) => (
+                    <div key={index}>
+                        {renderLine(part, `part-${index}`, false)}
+                    </div>
+                ))}
+                <Button onClick={handleStartTestClick}>
+                    Commencer l'évaluation émotionnelle
+                </Button>
+            </div>
+        );
+    }
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
@@ -101,12 +123,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
         onUpdate={onAnimationUpdate}
         onComplete={onAnimationComplete}
         isTyping={true}
+        onStartTest={onStartTest}
       />
     );
   }
 
   if (message.role === 'assistant' && isLastMessage && !isTyping) {
-    return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} onComplete={onAnimationComplete} />;
+    return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} onComplete={onAnimationComplete} onStartTest={onStartTest}/>;
   }
 
   return <div className="space-y-2">{renderContent(message.content)}</div>;

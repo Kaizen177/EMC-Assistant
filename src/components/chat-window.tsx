@@ -28,6 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import Dass21Test from "./dass21-test";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -45,6 +46,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isTestActive, setIsTestActive] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -56,6 +58,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const onSubmit = (data: ChatFormValues) => {
     sendMessage(data.message);
     form.reset();
+  };
+
+  const handleTestComplete = (results: number[]) => {
+    const resultString = `J'ai terminé l'évaluation. Mes réponses sont : ${results.join(', ')}`;
+    sendMessage(resultString);
+    setIsTestActive(false);
   };
 
   const scrollToBottom = () => {
@@ -107,7 +115,6 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       setIsAtBottom(isScrolledToBottom);
     }
   };
-
 
   return (
     <Card
@@ -193,9 +200,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <ChatMessage 
                     message={message}
                     isLastMessage={index === messages.length - 1}
-                    isTyping={isLoading}
+                    isTyping={isLoading && !isTestActive}
                     onAnimationUpdate={scrollToBottom}
                     onAnimationComplete={scrollToBottom}
+                    onStartTest={() => setIsTestActive(true)}
                   />
                 </div>
                 {message.role === "user" && (
@@ -207,7 +215,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 )}
               </div>
             ))}
-            {isLoading && (
+            {isLoading && !isTestActive &&(
               <div className="flex items-end gap-2 justify-start">
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-primary text-primary-foreground">
@@ -217,6 +225,18 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 <div className="bg-muted rounded-2xl rounded-bl-none px-4 py-3 flex items-center">
                   <TypingDots />
                 </div>
+              </div>
+            )}
+             {isTestActive && (
+              <div className="flex items-end gap-2 justify-start">
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <Bot className="w-5 h-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="w-full max-w-[75%] bg-muted text-card-foreground rounded-2xl rounded-bl-none">
+                    <Dass21Test onComplete={handleTestComplete} />
+                  </div>
               </div>
             )}
           </div>
@@ -241,7 +261,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       rows={1}
                       onKeyDown={handleKeyDown}
                       {...field}
-                      disabled={isLoading}
+                      disabled={isLoading || isTestActive}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -252,7 +272,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               type="submit"
               size="icon"
               className="flex-shrink-0 rounded-md"
-              disabled={isLoading || !messageValue}
+              disabled={isLoading || !messageValue || isTestActive}
               aria-label="Send message"
             >
               <Send className="w-5 h-5" />

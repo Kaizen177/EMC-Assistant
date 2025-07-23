@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
+import { Button } from './ui/button';
 
 interface TypingAnimationProps {
   text: string;
@@ -10,9 +11,10 @@ interface TypingAnimationProps {
   onUpdate?: () => void;
   onComplete?: () => void;
   isTyping?: boolean;
+  onStartTest: () => void;
 }
 
-const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate, onComplete, isTyping = false }) => {
+const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, className, onUpdate, onComplete, isTyping = false, onStartTest }) => {
   const [displayedText, setDisplayedText] = useState('');
   const onUpdateRef = useRef(onUpdate);
   const onCompleteRef = useRef(onComplete);
@@ -47,7 +49,32 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     }
   }, [text, speed]);
   
+  const handleStartTestClick = () => {
+    onStartTest();
+  };
+
   const renderContent = (textToRender: string) => {
+    if (textToRender.includes('[START_DASS21_TEST]')) {
+        const parts = textToRender.split('[START_DASS21_TEST]');
+        // only render the button when the typing is complete
+        const showButton = displayedText.length === text.length;
+
+        return (
+             <div className="space-y-4">
+                {parts.map((part, index) => (
+                    <div key={index}>
+                        {renderLine(part, `part-${index}`, false)}
+                    </div>
+                ))}
+                {showButton &&
+                    <Button onClick={handleStartTestClick}>
+                        Commencer l'évaluation émotionnelle
+                    </Button>
+                }
+            </div>
+        )
+    }
+
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
