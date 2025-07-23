@@ -68,7 +68,7 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-green-700 bg-green-100/50 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:underline break-all"
+                            className="text-green-700 bg-green-100/50 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:underline break-words"
                         >
                             {linkPart}
                         </a>
