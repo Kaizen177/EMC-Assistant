@@ -46,12 +46,12 @@ export default function ChatAssistant() {
     <>
       <div
         className={cn(
-          "fixed bottom-5 right-5 z-[1000] flex items-center gap-3 transition-all duration-300 md:bottom-8 md:right-8"
+          "fixed bottom-5 right-5 z-[1000] flex items-end gap-3 transition-all duration-300 md:bottom-8 md:right-8"
         )}
       >
         <div
           className={cn(
-            "w-auto rounded-lg bg-accent px-4 py-2 text-sm text-accent-foreground shadow-lg transition-all duration-500 ease-in-out",
+            "w-auto rounded-lg bg-accent px-4 py-2 text-sm text-accent-foreground shadow-lg transition-all duration-500 ease-in-out mb-2",
             "relative before:absolute before:bottom-1/2 before:-right-2 before:h-0 before:w-0 before:translate-y-1/2 before:border-b-[8px] before:border-l-[8px] before:border-t-[8px] before:border-b-transparent before:border-t-transparent before:border-l-accent",
             showGreeting && !isOpen
               ? "translate-x-0 opacity-100"
