@@ -10,12 +10,17 @@ export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
+  const [isPulsing, setIsPulsing] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
     const greetingTimer = setTimeout(() => {
       setShowGreeting(true);
     }, 1000); // Show after 1 second
+
+    const pulseTimer = setTimeout(() => {
+      setIsPulsing(false); // Stop pulsing after 5 seconds
+    }, 5000);
 
     const hideTimer = setTimeout(() => {
       setShowGreeting(false);
@@ -24,6 +29,7 @@ export default function ChatAssistant() {
     return () => {
       clearTimeout(greetingTimer);
       clearTimeout(hideTimer);
+      clearTimeout(pulseTimer);
     };
   }, []);
 
@@ -56,12 +62,18 @@ export default function ChatAssistant() {
           L'assistant EMC est là pour vous aider.
         </div>
         <div
+          onMouseEnter={() => setIsPulsing(true)}
+          onMouseLeave={() => setIsPulsing(false)}
           className={cn(
             "transition-all duration-300",
             isOpen ? "pointer-events-none scale-75 opacity-0" : "scale-100 opacity-100"
           )}
         >
-          <ChatBubble isOpen={isOpen} onClick={handleBubbleClick} />
+          <ChatBubble 
+            isOpen={isOpen} 
+            onClick={handleBubbleClick} 
+            isPulsing={isPulsing}
+          />
         </div>
       </div>
 
