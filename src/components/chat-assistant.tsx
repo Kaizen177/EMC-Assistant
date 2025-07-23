@@ -19,7 +19,7 @@ export default function ChatAssistant() {
 
     const hideTimer = setTimeout(() => {
       setShowGreeting(false);
-    }, 8000); // Hide after 8 seconds
+    }, 5000); // Hide after 5 seconds
 
     return () => {
       clearTimeout(greetingTimer);
@@ -40,13 +40,13 @@ export default function ChatAssistant() {
     <>
       <div
         className={cn(
-          "fixed bottom-5 right-5 z-[1000] flex items-end gap-3 transition-all duration-300 md:bottom-8 md:right-8"
+          "fixed bottom-5 right-5 z-[1000] flex items-center gap-3 transition-all duration-300 md:bottom-8 md:right-8"
         )}
       >
         <div
           className={cn(
-            "mb-2 w-auto rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground shadow-lg transition-all duration-300 ease-in-out",
-            "relative before:absolute before:bottom-2 before:-right-2 before:h-0 before:w-0 before:border-b-[8px] before:border-l-[8px] before:border-b-transparent before:border-l-muted",
+            "w-auto rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground shadow-lg transition-all duration-500 ease-in-out",
+            "relative before:absolute before:bottom-1/2 before:-right-2 before:h-0 before:w-0 before:-translate-y-1/2 before:border-b-[8px] before:border-l-[8px] before:border-t-[8px] before:border-b-transparent before:border-t-transparent before:border-l-muted",
             showGreeting && !isOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-4 opacity-0",
