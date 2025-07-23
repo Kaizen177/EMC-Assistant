@@ -88,17 +88,18 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     };
 
     if (textToRender.includes('[START_DASS21_TEST]')) {
-        const parts = textToRender.split('[START_DASS21_TEST]').map(part => part.trim());
+        const textBeforeButton = text.split('[START_DASS21_TEST]')[0].replace(/[^\p{L}\p{N}\p{P}\p{Z}]*$/u, '').trim();
+
         // only render the button when the typing is complete
         const showButton = displayedText.length === text.length;
 
         return (
              <div className="space-y-4">
-                {parts.map((part, index) => (
-                    part && <div key={index}>
-                        {renderLine(part, `part-${index}`, false)}
+                {textBeforeButton && (
+                    <div>
+                        {renderLine(textBeforeButton, `part-0`, false)}
                     </div>
-                ))}
+                )}
                 {showButton &&
                     <div className="mt-4">
                         <Button variant="outline" onClick={handleStartTestClick} className="w-full justify-start">
