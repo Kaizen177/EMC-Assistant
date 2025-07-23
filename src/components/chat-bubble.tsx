@@ -50,7 +50,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ onClick, isOpen, isPulsing }) => {
             </div>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top" align="center" className="bg-accent text-accent-foreground">
+        <TooltipContent side="top" align="center" className="bg-accent text-accent-foreground mb-2">
           <p>EMC Assistant</p>
         </TooltipContent>
       </Tooltip>
