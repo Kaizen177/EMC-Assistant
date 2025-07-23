@@ -92,7 +92,7 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: "Désolé, je n'ai pas pu me connecter au service de chat. Veuillez vérifier votre connexion et réessayer.",
+          content: "Désolé, je n'ai pas pu me connecter au service de chat. Veuillez réessayer.",
         };
         setMessages(prev => [...prev, errorMessage]);
       } finally {
