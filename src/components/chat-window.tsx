@@ -146,7 +146,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               </TooltipTrigger>
               <TooltipContent
                 side="bottom"
-                className="max-w-[300px] text-center"
+                align="end"
+                className="max-w-[300px]"
               >
                 Cet assistant IA a des limites. En cas de mal-être ou de situation grave, il est important de consulter un professionnel qualifié.
               </TooltipContent>
