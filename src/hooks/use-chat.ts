@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export type Message = {
@@ -21,10 +21,26 @@ const initialMessage: Message = {
     content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
 };
 
+const warmupApi = async () => {
+    try {
+        await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ warmup: true }),
+        });
+    } catch (error) {
+        console.warn("API warmup failed:", error);
+    }
+};
+
 export const useChat = (initialMessages: Message[] = [initialMessage]) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    warmupApi();
+  }, []);
 
   const sendMessage = useCallback(
     async (message: string) => {

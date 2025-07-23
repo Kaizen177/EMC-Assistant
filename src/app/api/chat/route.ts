@@ -17,6 +17,7 @@ const AIPoweredChatInputSchema = z.object({
     role: z.enum(['user', 'assistant']),
     content: z.string()
   })).optional().describe('The chat history between the user and the chatbot.'),
+  warmup: z.boolean().optional(),
 });
 
 const AIPoweredChatOutputSchema = z.object({
@@ -99,7 +100,13 @@ const aiPoweredChatFlow = ai.defineFlow(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    // Validate the incoming request body.
+    
+    // Handle warmup request
+    if (body.warmup) {
+      return NextResponse.json({ status: 'warmed up' });
+    }
+    
+    // Validate the incoming request body for actual chat messages.
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
 
     // Execute the pre-defined Genkit flow.
