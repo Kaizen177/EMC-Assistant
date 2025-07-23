@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -89,14 +90,12 @@ export default {
             height: '0',
           },
         },
-        'ping-subtle': {
+        'pulse-subtle': {
           '0%, 100%': {
-            transform: 'scale(1)',
-            boxShadow: '0 0 0 0px hsl(var(--primary) / 0.5)',
+            boxShadow: '0 0 0 0px hsl(var(--primary) / 0.7)',
           },
-          '50%': {
-            transform: 'scale(1.05)',
-            boxShadow: '0 0 0 8px hsl(var(--primary) / 0)',
+          '70%': {
+            boxShadow: '0 0 0 10px hsl(var(--primary) / 0)',
           },
         },
         'dot-pulse': {
@@ -107,7 +106,7 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'ping-once': 'ping-subtle 1.5s ease-in-out',
+        'pulse-subtle': 'pulse-subtle 2s infinite',
         'dot-pulse': 'dot-pulse 1.4s infinite ease-in-out',
       },
     },
