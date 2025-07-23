@@ -7,13 +7,15 @@ import { DASS21_QUESTIONS, DASS21_LABELS, Language } from "@/lib/dass21-question
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
 
 
 interface Dass21TestProps {
     onComplete: (results: number[], language: Language) => void;
+    onCancel: () => void;
 }
 
-const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
+const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<number[]>([]);
     const [language, setLanguage] = useState<Language>("fr");
@@ -34,7 +36,16 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
     const isArabic = language === 'ar';
 
     return (
-        <div className="p-4 space-y-4" dir={isArabic ? 'rtl' : 'ltr'}>
+        <div className="p-4 space-y-4 relative" dir={isArabic ? 'rtl' : 'ltr'}>
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute top-2 right-2 h-6 w-6"
+                onClick={onCancel}
+            >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Cancel Test</span>
+            </Button>
              <div className="flex justify-center gap-2 mb-4 border-b pb-4">
                 <Button variant={language === 'fr' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('fr')}>Français</Button>
                 <Button variant={language === 'en' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('en')}>English</Button>

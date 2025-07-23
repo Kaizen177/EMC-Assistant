@@ -43,7 +43,7 @@ const ChatFormSchema = z.object({
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
-  const { messages, isLoading, sendMessage } = useChat();
+  const { messages, isLoading, sendMessage, addMessage } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -70,6 +70,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     const resultString = `${submissionMessages[language]} ${results.join(', ')}`;
     sendMessage(resultString);
     setIsTestActive(false);
+  };
+  
+  const handleCancelTest = () => {
+    setIsTestActive(false);
+    addMessage({
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: "L'évaluation a été annulée."
+    });
   };
 
   const scrollToBottom = () => {
@@ -246,7 +255,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="w-full max-w-[75%] bg-muted text-card-foreground rounded-2xl rounded-bl-none">
-                    <Dass21Test onComplete={handleTestComplete} />
+                    <Dass21Test onComplete={handleTestComplete} onCancel={handleCancelTest} />
                   </div>
               </div>
             )}

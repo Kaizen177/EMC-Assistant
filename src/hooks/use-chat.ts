@@ -41,6 +41,10 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
   useEffect(() => {
     warmupApi();
   }, []);
+  
+  const addMessage = useCallback((message: Message) => {
+    setMessages(prev => [...prev, message]);
+  }, []);
 
   const sendMessage = useCallback(
     async (message: string) => {
@@ -102,5 +106,5 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
     [messages, toast]
   );
 
-  return { messages, isLoading, sendMessage };
+  return { messages, isLoading, sendMessage, addMessage };
 };
