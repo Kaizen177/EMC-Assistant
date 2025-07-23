@@ -7,7 +7,7 @@ import { DASS21_QUESTIONS, DASS21_LABELS, Language } from "@/lib/dass21-question
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
-import { X, ArrowLeft } from "lucide-react";
+import { X, Undo2 } from "lucide-react";
 
 
 interface Dass21TestProps {
@@ -83,7 +83,7 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                     className="h-9 w-9 text-muted-foreground flex-shrink-0"
                     aria-label={labels.back}
                 >
-                    <ArrowLeft className="h-5 w-5" />
+                    <Undo2 className="h-5 w-5" />
                 </Button>
                 <div className="grid grid-cols-4 gap-2 w-full">
                     <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
