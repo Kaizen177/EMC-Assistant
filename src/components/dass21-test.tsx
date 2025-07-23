@@ -7,7 +7,7 @@ import { DASS21_QUESTIONS, DASS21_LABELS, Language } from "@/lib/dass21-question
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 
 
 interface Dass21TestProps {
@@ -30,6 +30,13 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
             onComplete(newAnswers, language);
         }
     };
+    
+    const handleBack = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setAnswers(answers.slice(0, -1));
+        }
+    }
 
     const progress = ((currentQuestionIndex + 1) / DASS21_QUESTIONS[language].length) * 100;
     const labels = DASS21_LABELS[language];
@@ -70,7 +77,18 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete, onCancel }) => {
                 <Button variant="outline" onClick={() => handleAnswer(2)}>2</Button>
                 <Button variant="outline" onClick={() => handleAnswer(3)}>3</Button>
             </div>
-             <div className={cn("text-xs text-muted-foreground pt-2 space-y-1", isArabic ? "text-right" : "text-left")}>
+             <div className="mt-4 flex items-center">
+                 <Button 
+                    variant="ghost" 
+                    onClick={handleBack} 
+                    disabled={currentQuestionIndex === 0}
+                    className="text-muted-foreground"
+                >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    {labels.back}
+                </Button>
+            </div>
+             <div className={cn("text-xs text-muted-foreground pt-2 space-y-1 border-t mt-4", isArabic ? "text-right" : "text-left")}>
                 <p><b>0</b> = {labels.option0}</p>
                 <p><b>1</b> = {labels.option1}</p>
                 <p><b>2</b> = {labels.option2}</p>

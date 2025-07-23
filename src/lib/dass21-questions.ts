@@ -81,6 +81,7 @@ export const DASS21_LABELS: Record<Language, {
     option1: string;
     option2: string;
     option3: string;
+    back: string;
 }> = {
     fr: {
         question: "Question",
@@ -88,7 +89,8 @@ export const DASS21_LABELS: Record<Language, {
         option0: "Ne s'applique pas du tout à moi.",
         option1: "S'applique un peu à moi, ou une partie du temps.",
         option2: "S'applique assez à moi, ou une bonne partie du temps.",
-        option3: "S'applique beaucoup à moi, ou la plupart du temps."
+        option3: "S'applique beaucoup à moi, ou la plupart du temps.",
+        back: "Retour"
     },
     en: {
         question: "Question",
@@ -96,7 +98,8 @@ export const DASS21_LABELS: Record<Language, {
         option0: "Did not apply to me at all.",
         option1: "Applied to me to some degree, or some of the time.",
         option2: "Applied to me to a considerable degree, or a good part of time.",
-        option3: "Applied to me very much, or most of the time."
+        option3: "Applied to me very much, or most of the time.",
+        back: "Back"
     },
     ar: {
         question: "سؤال",
@@ -104,6 +107,7 @@ export const DASS21_LABELS: Record<Language, {
         option0: "لم ينطبق عليّ إطلاقًا.",
         option1: "انطبق عليّ إلى حد ما، أو في بعض الأحيان.",
         option2: "انطبق عليّ إلى درجة كبيرة، أو في جزء كبير من الوقت.",
-        option3: "انطبق عليّ كثيرًا، أو في معظم الأحيان."
+        option3: "انطبق عليّ كثيرًا، أو في معظم الأحيان.",
+        back: "رجوع"
     }
 };
