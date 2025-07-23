@@ -45,15 +45,15 @@ export default function ChatAssistant() {
       >
         <div
           className={cn(
-            "mb-2 w-52 rounded-lg bg-primary px-4 py-3 text-sm text-primary-foreground shadow-lg transition-all duration-300 ease-in-out",
-            "relative before:absolute before:bottom-2 before:-right-2 before:h-0 before:w-0 before:border-b-[10px] before:border-l-[10px] before:border-b-transparent before:border-l-primary",
+            "mb-2 w-auto rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground shadow-lg transition-all duration-300 ease-in-out",
+            "relative before:absolute before:bottom-2 before:-right-2 before:h-0 before:w-0 before:border-b-[8px] before:border-l-[8px] before:border-b-transparent before:border-l-muted",
             showGreeting && !isOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-4 opacity-0",
             isOpen ? "hidden" : "" // Immediately hide when chat opens
           )}
         >
-          Bonjour! Je suis là pour vous aider. N'hésitez pas à me poser une question.
+          L'assistant EMC est là pour vous aider.
         </div>
         <div
           className={cn(
