@@ -1,3 +1,4 @@
+
 // src/components/chat-message.tsx
 
 "use client";
@@ -25,21 +26,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   };
   
   const renderContent = (text: string) => {
-    if (text.includes('[START_DASS21_TEST]')) {
-        const parts = text.split('[START_DASS21_TEST]');
-        return (
-            <div className="space-y-4">
-                {parts.map((part, index) => (
-                    <div key={index}>
-                        {renderLine(part, `part-${index}`, false)}
-                    </div>
-                ))}
-                <Button onClick={handleStartTestClick}>
-                    Commencer l'évaluation émotionnelle
-                </Button>
-            </div>
-        );
-    }
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
@@ -71,6 +57,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
       });
       return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
+
+    if (text.includes('[START_DASS21_TEST]')) {
+        const parts = text.split('[START_DASS21_TEST]');
+        return (
+            <div className="space-y-4">
+                {parts.map((part, index) => (
+                    <div key={index}>
+                        {renderLine(part, `part-${index}`, false)}
+                    </div>
+                ))}
+                <Button onClick={handleStartTestClick}>
+                    Commencer l'évaluation émotionnelle
+                </Button>
+            </div>
+        );
+    }
 
     const lines = text.split('\n');
     const elements: JSX.Element[] = [];
