@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
+import { PlayCircle } from 'lucide-react';
 
 interface TypingAnimationProps {
   text: string;
@@ -55,10 +56,9 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
   };
 
   const renderContent = (textToRender: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-    const boldRegex = /\*\*(.*?)\*\*/g;
-
     const renderLine = (line: string, lineKey: string, isListItem: boolean) => {
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+        const boldRegex = /\*\*(.*?)\*\*/g;
         const parts = line.split(boldRegex).filter(Boolean);
         const content = parts.map((part, index) => {
             if (index % 2 === 1) {
@@ -100,9 +100,12 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
                     </div>
                 ))}
                 {showButton &&
-                    <Button onClick={handleStartTestClick}>
-                        Commencer l'évaluation émotionnelle
-                    </Button>
+                    <div className="mt-4">
+                        <Button variant="outline" onClick={handleStartTestClick} className="w-full justify-start">
+                             <PlayCircle className="mr-2 h-4 w-4" />
+                            Commencer l'évaluation
+                        </Button>
+                    </div>
                 }
             </div>
         )

@@ -6,6 +6,7 @@
 import React from 'react';
 import TypingAnimation from './typing-animation';
 import { Button } from './ui/button';
+import { PlayCircle } from 'lucide-react';
 
 interface ChatMessageProps {
   message: {
@@ -26,10 +27,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
   };
   
   const renderContent = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-    const boldRegex = /\*\*(.*?)\*\*/g;
-
     const renderLine = (line: string, lineKey: string, isListItem: boolean) => {
+      const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+      const boldRegex = /\*\*(.*?)\*\*/g;
+
       const parts = line.split(boldRegex).filter(Boolean);
       const content = parts.map((part, index) => {
         if (index % 2 === 1) {
@@ -67,9 +68,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
                         {renderLine(part, `part-${index}`, false)}
                     </div>
                 ))}
-                <Button onClick={handleStartTestClick}>
-                    Commencer l'évaluation émotionnelle
-                </Button>
+                 <div className="mt-4">
+                    <Button variant="outline" onClick={handleStartTestClick} className="w-full justify-start">
+                        <PlayCircle className="mr-2 h-4 w-4" />
+                        Commencer l'évaluation
+                    </Button>
+                </div>
             </div>
         );
     }

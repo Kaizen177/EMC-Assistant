@@ -74,6 +74,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       }
     }
   };
+  
+  const handleStartTest = () => {
+    setIsTestActive(true);
+    setTimeout(scrollToBottom, 50);
+  }
 
   useEffect(() => {
     if(isAtBottom) {
@@ -203,7 +208,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                     isTyping={isLoading && !isTestActive}
                     onAnimationUpdate={scrollToBottom}
                     onAnimationComplete={scrollToBottom}
-                    onStartTest={() => setIsTestActive(true)}
+                    onStartTest={handleStartTest}
                   />
                 </div>
                 {message.role === "user" && (
