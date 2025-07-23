@@ -60,11 +60,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     };
 
     if (text.includes('[START_DASS21_TEST]')) {
-        const parts = text.split('[START_DASS21_TEST]');
+        const parts = text.split('[START_DASS21_TEST]').map(part => part.trim());
         return (
             <div className="space-y-4">
                 {parts.map((part, index) => (
-                    <div key={index}>
+                    part && <div key={index}>
                         {renderLine(part, `part-${index}`, false)}
                     </div>
                 ))}
