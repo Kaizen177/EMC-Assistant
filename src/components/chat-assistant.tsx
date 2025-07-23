@@ -19,7 +19,7 @@ export default function ChatAssistant() {
 
     const hideTimer = setTimeout(() => {
       setShowGreeting(false);
-    }, 5000); // Hide after 5 seconds
+    }, 5000); // Hide after 5 seconds total (1s delay + 4s visible)
 
     return () => {
       clearTimeout(greetingTimer);
