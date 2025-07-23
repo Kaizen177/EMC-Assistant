@@ -37,9 +37,11 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
                 <Progress value={progress} className="w-full" />
             </div>
 
-            <p className="font-semibold text-card-foreground">
-                {DASS21_QUESTIONS[currentQuestionIndex]}
-            </p>
+            <div className="h-24 flex items-center">
+                <p className="text-sm font-semibold text-card-foreground">
+                    {DASS21_QUESTIONS[currentQuestionIndex]}
+                </p>
+            </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Button variant="outline" onClick={() => handleAnswer(0)}>0</Button>
@@ -50,7 +52,7 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
              <p className="text-xs text-muted-foreground pt-2">
                 0 = Ne s'applique pas du tout à moi. <br/>
                 1 = S'applique un peu à moi, ou une partie du temps. <br/>
-                2 = S'applique assez à moi, ou une bonne partie du temps. <br/>
+s'applique                2 = S'applique assez à moi, ou une bonne partie du temps. <br/>
                 3 = S'applique beaucoup à moi, ou la plupart du temps.
             </p>
         </div>
