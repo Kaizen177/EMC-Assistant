@@ -1,4 +1,3 @@
-
 // src/components/chat-message.tsx
 
 "use client";
@@ -7,6 +6,9 @@ import React from 'react';
 import TypingAnimation from './typing-animation';
 import { Button } from './ui/button';
 import { PlayCircle } from 'lucide-react';
+import { isArabic } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+
 
 interface ChatMessageProps {
   message: {
@@ -82,12 +84,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     const lines = text.split('\n');
     const elements: JSX.Element[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
+    const isRtl = isArabic(text);
 
     const flushList = (key: string) => {
       if (list) {
         const ListTag = list.type;
         elements.push(
-          <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed'}>
+          <ListTag key={key} className={cn(
+            'space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed',
+             isRtl ? 'pr-5 list-disc' : 'pl-5 list-disc'
+          )}>
             {list.items.map((item, index) => (
               <li key={`li-${index}`}>{renderLine(item, `li-item-${index}`, true)}</li>
             ))}
@@ -123,6 +129,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     return <div className="space-y-2">{elements}</div>;
   };
 
+  const isRtl = isArabic(message.content);
+
   if (message.role === 'assistant' && isTyping && isLastMessage) {
     return (
       <TypingAnimation
@@ -139,7 +147,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyp
     return <TypingAnimation text={message.content} onUpdate={onAnimationUpdate} onComplete={onAnimationComplete} onStartTest={onStartTest}/>;
   }
 
-  return <div className="space-y-2">{renderContent(message.content)}</div>;
+  return (
+    <div className={cn("space-y-2", isRtl ? "text-right" : "text-left")} dir={isRtl ? "rtl" : "ltr"}>
+        {renderContent(message.content)}
+    </div>
+  );
 };
 
 export default ChatMessage;

@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
 import { PlayCircle } from 'lucide-react';
+import { isArabic } from '@/lib/utils';
 
 interface TypingAnimationProps {
   text: string;
@@ -56,6 +57,8 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
   };
 
   const renderContent = (textToRender: string) => {
+    const isRtl = isArabic(textToRender);
+
     const renderLine = (line: string, lineKey: string, isListItem: boolean) => {
         const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
         const boldRegex = /\*\*(.*?)\*\*/g;
@@ -115,12 +118,15 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
     const lines = textToRender.split('\n');
     const elements: JSX.Element[] = [];
     let list: { type: 'ul' | 'ol'; items: string[] } | null = null;
-
+    
     const flushList = (key: string) => {
         if (list) {
             const ListTag = list.type;
             elements.push(
-                <ListTag key={key} className={(ListTag === 'ul' ? 'list-disc' : 'list-decimal') + ' pl-5 space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed'}>
+                <ListTag key={key} className={cn(
+                  'space-y-1 my-4 first:mt-0 last:mb-0 leading-relaxed',
+                   isRtl ? 'pr-5 list-disc' : 'pl-5 list-disc'
+                )}>
                     {list.items.map((item, index) => (
                         <li key={`li-${index}`}>{renderLine(item, `li-item-${index}`, true)}</li>
                     ))}
@@ -159,9 +165,14 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
   if (isTyping && !displayedText) {
     return null;
   }
-
+  
+  const isRtl = isArabic(text);
   const renderedElements = renderContent(displayedText);
-  return <div className={cn("space-y-2", className)}>{renderedElements}</div>;
+  return (
+    <div className={cn("space-y-2", className, isRtl ? "text-right" : "text-left")} dir={isRtl ? "rtl" : "ltr"}>
+      {renderedElements}
+    </div>
+  );
 };
 
 export default TypingAnimation;
