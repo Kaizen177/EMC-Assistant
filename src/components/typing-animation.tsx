@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -54,27 +55,6 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
   };
 
   const renderContent = (textToRender: string) => {
-    if (textToRender.includes('[START_DASS21_TEST]')) {
-        const parts = textToRender.split('[START_DASS21_TEST]');
-        // only render the button when the typing is complete
-        const showButton = displayedText.length === text.length;
-
-        return (
-             <div className="space-y-4">
-                {parts.map((part, index) => (
-                    <div key={index}>
-                        {renderLine(part, `part-${index}`, false)}
-                    </div>
-                ))}
-                {showButton &&
-                    <Button onClick={handleStartTestClick}>
-                        Commencer l'évaluation émotionnelle
-                    </Button>
-                }
-            </div>
-        )
-    }
-
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
@@ -106,6 +86,27 @@ const TypingAnimation: React.FC<TypingAnimationProps> = ({ text, speed = 10, cla
         });
         return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
+
+    if (textToRender.includes('[START_DASS21_TEST]')) {
+        const parts = textToRender.split('[START_DASS21_TEST]');
+        // only render the button when the typing is complete
+        const showButton = displayedText.length === text.length;
+
+        return (
+             <div className="space-y-4">
+                {parts.map((part, index) => (
+                    <div key={index}>
+                        {renderLine(part, `part-${index}`, false)}
+                    </div>
+                ))}
+                {showButton &&
+                    <Button onClick={handleStartTestClick}>
+                        Commencer l'évaluation émotionnelle
+                    </Button>
+                }
+            </div>
+        )
+    }
 
     const lines = textToRender.split('\n');
     const elements: JSX.Element[] = [];
