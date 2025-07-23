@@ -48,6 +48,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [isTestActive, setIsTestActive] = useState(false);
+  const [isTestVisible, setIsTestVisible] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -70,6 +71,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     const resultString = `${submissionMessages[language]} ${results.join(', ')}`;
     sendMessage(resultString);
     setIsTestActive(false);
+    setIsTestVisible(false);
   };
   
   const handleCancelTest = (language: Language) => {
@@ -79,6 +81,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
       ar: "تم إلغاء التقييم.",
     }
     setIsTestActive(false);
+    setIsTestVisible(false);
     addMessage({
       id: Date.now().toString(),
       role: 'assistant',
@@ -97,7 +100,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   
   const handleStartTest = () => {
     setIsTestActive(true);
-    setTimeout(scrollToBottom, 50);
+    setTimeout(() => {
+        setIsTestVisible(true);
+        scrollToBottom();
+    }, 50);
   }
 
   useEffect(() => {
@@ -253,7 +259,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               </div>
             )}
              {isTestActive && (
-              <div className="flex items-end gap-2 justify-start">
+              <div className={cn(
+                "flex items-end gap-2 justify-start transition-all duration-500 ease-out",
+                isTestVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              )}>
                   <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot className="w-5 h-5" />
@@ -310,3 +319,5 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
 };
 
 export default ChatWindow;
+
+    
