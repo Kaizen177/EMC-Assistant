@@ -133,34 +133,35 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 BETA
               </span>
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <p className="text-[11px] ">Online</p>
-              <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <AlertCircle className="w-3 h-3" />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    className="max-w-[200px] text-center"
-                  >
-                    L'IA peut faire des erreurs. Veuillez vérifier les
-                    informations importantes.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            <p className="text-[11px] text-muted-foreground">Online</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="rounded-full"
-          aria-label="Close chat"
-        >
-          <X className="w-5 h-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                  <AlertCircle className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                className="max-w-[300px] text-center"
+              >
+                Cet assistant IA a des limites. En cas de mal-être ou de situation grave, il est important de consulter un professionnel qualifié.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="rounded-full"
+            aria-label="Close chat"
+          >
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-y-auto" onScroll={handleScroll}>
         <ScrollArea className="h-full" ref={scrollAreaRef}>
