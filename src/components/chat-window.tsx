@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import Dass21Test from "./dass21-test";
+import { Language } from "@/lib/dass21-questions";
 
 interface ChatWindowProps {
   onClose: () => void;
@@ -60,8 +61,13 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     form.reset();
   };
 
-  const handleTestComplete = (results: number[]) => {
-    const resultString = `J'ai terminé l'évaluation. Mes réponses sont : ${results.join(', ')}`;
+  const handleTestComplete = (results: number[], language: Language) => {
+    const submissionMessages = {
+      fr: "J'ai terminé l'évaluation. Mes réponses sont :",
+      en: "I have completed the assessment. My answers are:",
+      ar: "لقد أكملت التقييم. إجاباتاتي هي:",
+    };
+    const resultString = `${submissionMessages[language]} ${results.join(', ')}`;
     sendMessage(resultString);
     setIsTestActive(false);
   };

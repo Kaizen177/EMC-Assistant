@@ -1,6 +1,8 @@
 // src/lib/dass21-questions.ts
 
-export const DASS21_QUESTIONS: Record<"fr" | "en" | "ar", string[]> = {
+export type Language = "fr" | "en" | "ar";
+
+export const DASS21_QUESTIONS: Record<Language, string[]> = {
     fr: [
         "J'ai eu du mal à me calmer.",
         "J'ai eu la bouche sèche.",
@@ -72,7 +74,7 @@ export const DASS21_QUESTIONS: Record<"fr" | "en" | "ar", string[]> = {
     ]
 };
 
-export const DASS21_LABELS: Record<"fr" | "en" | "ar", {
+export const DASS21_LABELS: Record<Language, {
     question: string;
     of: string;
     option0: string;

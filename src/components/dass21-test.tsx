@@ -3,15 +3,14 @@
 "use client";
 
 import { useState } from "react";
-import { DASS21_QUESTIONS, DASS21_LABELS } from "@/lib/dass21-questions";
+import { DASS21_QUESTIONS, DASS21_LABELS, Language } from "@/lib/dass21-questions";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
 
-type Language = "fr" | "en" | "ar";
 
 interface Dass21TestProps {
-    onComplete: (results: number[]) => void;
+    onComplete: (results: number[], language: Language) => void;
 }
 
 const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
@@ -26,7 +25,7 @@ const Dass21Test: React.FC<Dass21TestProps> = ({ onComplete }) => {
         if (currentQuestionIndex < DASS21_QUESTIONS[language].length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            onComplete(newAnswers);
+            onComplete(newAnswers, language);
         }
     };
 
