@@ -29,9 +29,9 @@ export const DASS21_QUESTIONS: Record<Language, string[]> = {
     en: [
         "I found it hard to wind down",
         "I was aware of dryness of my mouth",
-        "I couldn’t experience any positive feeling",
-        "I experienced breathing difficulty (e.g. breathlessness without exertion)",
-        "I found it difficult to work up initiative",
+        "I couldn’t seem to experience any positive feeling at all",
+        "I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)",
+        "I found it difficult to work up the initiative to do things",
         "I tended to over-react to situations",
         "I experienced trembling (e.g. in the hands)",
         "I felt that I was using a lot of nervous energy",
@@ -45,7 +45,7 @@ export const DASS21_QUESTIONS: Record<Language, string[]> = {
         "I was unable to become enthusiastic about anything",
         "I felt I wasn’t worth much as a person",
         "I felt that I was rather touchy",
-        "I was aware of the action of my heart in the absence of physical exertion",
+        "I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat)",
         "I felt scared without any good reason",
         "I felt that life was meaningless"
     ],
