@@ -97,9 +97,16 @@ export async function POST(req: NextRequest) {
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
     
     // Check if the message is a DASS-21 submission
-    const dass21Prefix = "Mes réponses sont : ";
-    if (message.startsWith(dass21Prefix)) {
-        const answersString = message.substring(dass21Prefix.length);
+    const dass21Prefixes = [
+        "Mes réponses sont :",
+        "My answers are:",
+        "إجاباتاتي هي:",
+    ];
+
+    const prefix = dass21Prefixes.find(p => message.includes(p));
+
+    if (prefix) {
+        const answersString = message.substring(message.indexOf(prefix) + prefix.length);
         const answers = answersString.split(',').map(s => parseInt(s.trim(), 10));
         
         if (answers.length === 21 && answers.every(n => !isNaN(n))) {
