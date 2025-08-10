@@ -30,6 +30,59 @@ const InternalPromptSchema = z.object({
     currentDate: z.string(),
 });
 
+// Function to calculate and interpret DASS-21 scores
+const calculateDass21 = (answers: number[]): string => {
+    const depressionIndices = [3, 5, 10, 13, 16, 17, 21];
+    const anxietyIndices = [2, 4, 7, 9, 15, 19, 20];
+    const stressIndices = [1, 6, 8, 11, 12, 14, 18];
+
+    const calculateScore = (indices: number[]) => indices.reduce((sum, index) => sum + (answers[index - 1] || 0), 0) * 2;
+
+    const depressionScore = calculateScore(depressionIndices);
+    const anxietyScore = calculateScore(anxietyIndices);
+    const stressScore = calculateScore(stressIndices);
+
+    const getDepressionLevel = (score: number) => {
+        if (score >= 28) return "Extrêmement sévère";
+        if (score >= 21) return "Sévère";
+        if (score >= 14) return "Modéré";
+        if (score >= 10) return "Léger";
+        return "Normal";
+    };
+
+    const getAnxietyLevel = (score: number) => {
+        if (score >= 20) return "Extrêmement sévère";
+        if (score >= 15) return "Sévère";
+        if (score >= 10) return "Modéré";
+        if (score >= 8) return "Léger";
+        return "Normal";
+    };
+
+    const getStressLevel = (score: number) => {
+        if (score >= 34) return "Extrêmement sévère";
+        if (score >= 26) return "Sévère";
+        if (score >= 19) return "Modéré";
+        if (score >= 15) return "Léger";
+        return "Normal";
+    };
+
+    const depressionLevel = getDepressionLevel(depressionScore);
+    const anxietyLevel = getAnxietyLevel(anxietyScore);
+    const stressLevel = getStressLevel(stressScore);
+    
+    const hasIssues = [depressionLevel, anxietyLevel, stressLevel].some(level => !['Normal', 'Léger'].includes(level));
+
+    let response = `Voici les résultats de votre évaluation :\n\n- **Dépression** : Score de ${depressionScore}, niveau ${depressionLevel}.\n- **Anxiété** : Score de ${anxietyScore}, niveau ${anxietyLevel}.\n- **Stress** : Score de ${stressScore}, niveau ${stressLevel}.`;
+    
+    response += "\n\nCe test est une évaluation et non un diagnostic. Pour un avis adapté, consultez un professionnel.";
+
+    if (hasIssues) {
+      response += " Vous pouvez trouver des ressources ici : www.ressources1223.ma";
+    }
+
+    return response;
+};
+
 // The main POST request handler.
 export async function POST(req: NextRequest) {
   try {
@@ -42,6 +95,19 @@ export async function POST(req: NextRequest) {
     
     // Validate the incoming request body for actual chat messages.
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
+    
+    // Check if the message is a DASS-21 submission
+    const dass21Prefix = "Mes réponses sont : ";
+    if (message.startsWith(dass21Prefix)) {
+        const answersString = message.substring(dass21Prefix.length);
+        const answers = answersString.split(',').map(s => parseInt(s.trim(), 10));
+        
+        if (answers.length === 21 && answers.every(n => !isNaN(n))) {
+            const result = calculateDass21(answers);
+            return NextResponse.json({ response: result });
+        }
+    }
+
 
     // Read the prompt file on every request to ensure the latest version is used.
     const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');

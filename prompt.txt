@@ -49,41 +49,6 @@ Action :
 
 1. Fournis une réponse claire et concise en utilisant la base de connaissances ci-dessous.
 2. Si pertinent, dirige l’utilisateur vers les ressources appropriées (site web, e-mail, etc.).
-
-Niveau 5 : Analyse des résultats du test DASS-21
-Déclencheur: L'utilisateur envoie un message contenant "Mes réponses sont :".
-Action:
-1. Les réponses sont une série de 21 nombres de 0 à 3.
-2. Calcule les scores pour la Dépression, l'Anxiété et le Stress en utilisant les indices de questions suivants :
-   - Dépression: questions 3, 5, 10, 13, 16, 17, 21
-   - Anxiété: questions 2, 4, 7, 9, 15, 19, 20
-   - Stress: questions 1, 6, 8, 11, 12, 14, 18
-3. Pour chaque catégorie, additionne les scores des questions correspondantes et multiplie le total par 2 pour obtenir le score final.
-4. Interprète les scores en utilisant la logique suivante, sans faute :
-   - **Pour la Dépression :**
-     - Si le score est >= 28, le niveau est "Extrêmement sévère".
-     - Sinon, si le score est >= 21, le niveau est "Sévère".
-     - Sinon, si le score est >= 14, le niveau est "Modéré".
-     - Sinon, si le score est >= 10, le niveau est "Léger".
-     - Sinon, le niveau est "Normal".
-   - **Pour l'Anxiété :**
-     - Si le score est >= 20, le niveau est "Extrêmement sévère".
-     - Sinon, si le score est >= 15, le niveau est "Sévère".
-     - Sinon, si le score est >= 10, le niveau est "Modéré".
-     - Sinon, si le score est >= 8, le niveau est "Léger".
-     - Sinon, le niveau est "Normal".
-   - **Pour le Stress :**
-     - Si le score est >= 34, le niveau est "Extrêmement sévère".
-     - Sinon, si le score est >= 26, le niveau est "Sévère".
-     - Sinon, si le score est >= 19, le niveau est "Modéré".
-     - Sinon, si le score est >= 15, le niveau est "Léger".
-     - Sinon, le niveau est "Normal".
-5. Fournis une analyse concise et bien structurée des résultats. Commence par "Voici les résultats de votre évaluation :". Utilise des listes à puces pour chaque catégorie, en mettant le nom de la catégorie en gras.
-   Exemple de format :
-   - **Dépression :** Score de [score], niveau [niveau].
-   - **Anxiété :** Score de [score], niveau [niveau].
-   - **Stress :** Score de [score], niveau [niveau].
-6. **Très important** : Conclus **uniquement** avec la phrase : "Ce test est une évaluation et non un diagnostic. Pour un avis adapté, consultez un professionnel.". Si l'un des niveaux est "Modéré", "Sévère" ou "Extrêmement sévère", ajoute la phrase : "Vous pouvez trouver des ressources ici : www.ressources1223.ma".
 </Protocole>
 
 <Base-de-Connaissances>
