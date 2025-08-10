@@ -77,7 +77,7 @@ const calculateDass21 = (answers: number[]): string => {
     response += "\n\nCe test est une évaluation et non un diagnostic. Pour un avis adapté, consultez un professionnel.";
 
     if (hasIssues) {
-      response += " Vous pouvez trouver des ressources ici : www.ressources1223.ma";
+      response += " Les ressources sur le site suivant pourraient vous être utiles : www.ressources1223.ma";
     }
 
     return response;
