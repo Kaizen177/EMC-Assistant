@@ -72,7 +72,7 @@ const calculateDass21 = (answers: number[]): string => {
     
     const hasIssues = [depressionLevel, anxietyLevel, stressLevel].some(level => !['Normal', 'Léger'].includes(level));
 
-    let response = `Voici les résultats de votre évaluation :\n\n- **Dépression** : Score de ${depressionScore}, niveau ${depressionLevel}.\n- **Anxiété** : Score de ${anxietyScore}, niveau ${anxietyLevel}.\n- **Stress** : Score de ${stressScore}, niveau ${stressLevel}.`;
+    let response = `Voici les résultats de votre évaluation : Dépression : Score de ${depressionScore}, niveau ${depressionLevel}. Anxiété : Score de ${anxietyScore}, niveau ${anxietyLevel}. Stress : Score de ${stressScore}, niveau ${stressLevel}.`;
     
     response += "\n\nCe test est une évaluation et non un diagnostic. Pour un avis adapté, consultez un professionnel.";
 
