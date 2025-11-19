@@ -28,32 +28,12 @@ const AIPoweredChatOutputSchema = z.object({
 const InternalPromptSchema = z.object({
     message: z.string(),
     chatHistory: z.array(z.object({
-        isUser: z.boolean(),
-        content: z.string(),
+        role: z.enum(['user', 'model']),
+        content: z.any(),
     })).optional(),
     currentDate: z.string(),
 });
 
-// Define the Genkit prompt and flow *outside* the request handler.
-// This ensures they are created only once when the function initializes.
-const chatPrompt = ai.definePrompt({
-  name: 'aiPoweredChatPrompt',
-  input: {
-    schema: InternalPromptSchema,
-  },
-  output: {
-    schema: AIPoweredChatOutputSchema,
-  },
-  system: promptText,
-  prompt: `{{#if chatHistory}}
-Chat History:
-{{#each chatHistory}}
-{{#if this.isUser}}User: {{this.content}}{{else}}Assistant: {{this.content}}{{/if}}
-{{/each}}
-{{/if}}
-
-User: {{{message}}}`,
-});
 
 const aiPoweredChatFlow = ai.defineFlow(
   {
@@ -62,13 +42,7 @@ const aiPoweredChatFlow = ai.defineFlow(
     outputSchema: AIPoweredChatOutputSchema,
   },
   async (input) => {
-    // Process chat history to match the prompt's expected format.
-    const processedHistory = input.chatHistory?.map(item => ({
-        isUser: item.role === 'user',
-        content: item.content
-    }));
 
-    // Get the current date and time.
     const currentDate = new Date().toLocaleString('fr-FR', {
         weekday: 'long',
         year: 'numeric',
@@ -79,19 +53,26 @@ const aiPoweredChatFlow = ai.defineFlow(
         second: '2-digit'
     });
 
-    // Call the pre-defined prompt with the processed input.
-    const { output } = await chatPrompt({
-        message: input.message,
-        chatHistory: processedHistory,
-        currentDate,
+    const systemPrompt = promptText.replace('{{currentDate}}', currentDate);
+
+    const history = (input.chatHistory || []).map(message => ({
+        role: message.role === 'user' ? 'user' : 'model',
+        content: [{ text: message.content }]
+    }));
+
+    const response = await ai.generate({
+        model: 'googleai/gemini-2.5-flash',
+        system: systemPrompt,
+        messages: [...history, { role: 'user', content: [{ text: input.message }] }],
     });
     
-    if (!output) {
+    const text = response.text;
+    if (!text) {
       throw new Error('AI failed to generate a response.');
     }
 
     return {
-      response: output.response
+      response: text
     };
   }
 );
