@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChatBubble from "@/components/chat-bubble";
 import ChatWindow from "@/components/chat-window";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -26,6 +27,27 @@ export default function ChatAssistant() {
   const handleBubbleClick = () => {
     setIsOpen(!isOpen);
   };
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        chatWindowRef.current &&
+        !chatWindowRef.current.contains(event.target as Node)
+      ) {
+        // We check if the click is on the bubble itself to prevent immediate re-opening
+        const bubble = document.querySelector('[aria-label="Close chat"]');
+        if (!bubble || !bubble.contains(event.target as Node)) {
+          setIsOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   if (!isClient) {
     return null;
@@ -55,6 +77,7 @@ export default function ChatAssistant() {
       </div>
 
       <div
+        ref={chatWindowRef}
         className={cn(
           "fixed inset-0 z-[999] transition-opacity duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto",
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
