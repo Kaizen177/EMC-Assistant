@@ -1,4 +1,3 @@
-
 "use client";
 
 import { type FC, useEffect, useRef, useState } from "react";
@@ -54,62 +53,76 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   });
 
   const onSubmit = (data: ChatFormValues) => {
+    if (!data.message.trim()) return; // Prevent empty sends
     sendMessage(data.message);
     form.reset();
+    // Reset height immediately after sending
+    if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+    }
   };
 
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
-      const scrollableView = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-      if(scrollableView) {
-          scrollableView.scrollTop = scrollableView.scrollHeight;
+      const scrollableView = scrollAreaRef.current.querySelector(
+        "div[data-radix-scroll-area-viewport]"
+      );
+      if (scrollableView) {
+        scrollableView.scrollTop = scrollableView.scrollHeight;
       }
     }
   };
 
   useEffect(() => {
-    if(isAtBottom) {
+    if (isAtBottom) {
       scrollToBottom();
     }
   }, [messages, isLoading, isAtBottom]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       form.handleSubmit(onSubmit)();
     }
   };
-  
+
   const { watch, control } = form;
   const messageValue = watch("message");
 
+  // Improved Auto-Grow Logic
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto'; 
+      // We reset to 'auto' first so it can shrink if text is deleted
+      textarea.style.height = "auto";
       const scrollHeight = textarea.scrollHeight;
-      textarea.style.height = `${scrollHeight}px`;
+      
+      // We set a max height limit so it doesn't take over the whole screen
+      // If content is larger than 150px, it will scroll internally
+      textarea.style.height = `${Math.min(scrollHeight, 150)}px`;
     }
   }, [messageValue]);
 
   const handleScroll = () => {
-    const scrollableView = scrollAreaRef.current?.querySelector('div[data-radix-scroll-area-viewport]');
+    const scrollableView = scrollAreaRef.current?.querySelector(
+      "div[data-radix-scroll-area-viewport]"
+    );
     if (scrollableView) {
       const { scrollTop, scrollHeight, clientHeight } = scrollableView;
-      const isScrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 20;
+      const isScrolledToBottom =
+        Math.ceil(scrollTop + clientHeight) >= scrollHeight - 20;
       setIsAtBottom(isScrolledToBottom);
     }
   };
 
-
   return (
     <Card
       className={cn(
-        "w-full h-full md:w-[400px] md:h-[600px] shadow-2xl rounded-t-2xl md:rounded-2xl flex flex-col bg-card",
+        "w-full h-full md:w-[400px] md:h-[600px] shadow-2xl rounded-2xl flex flex-col bg-card border-0 md:border",
         className
       )}
     >
-      <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
+      <CardHeader className="flex flex-row items-center justify-between p-4 border-b shrink-0">
         <div className="flex items-center space-x-3">
           <div className="relative">
             <Avatar>
@@ -133,7 +146,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <TooltipProvider delayDuration={100}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                >
                   <AlertCircle className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
@@ -142,7 +159,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 align="end"
                 className="max-w-[300px]"
               >
-                Cet assistant IA a des limites. En cas de mal-être ou de situation grave, il est important de consulter un professionnel qualifié.
+                Cet assistant IA a des limites. En cas de mal-être ou de
+                situation grave, il est important de consulter un professionnel
+                qualifié.
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -157,8 +176,15 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-y-auto" onScroll={handleScroll}>
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
+      
+      <CardContent
+        className="flex-1 p-0 overflow-hidden flex flex-col min-h-0"
+      >
+        <ScrollArea 
+          className="flex-1 h-full w-full" 
+          ref={scrollAreaRef}
+          onScrollCapture={handleScroll}
+        >
           <div className="p-4 space-y-4">
             {messages.map((message, index) => (
               <div
@@ -169,7 +195,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 )}
               >
                 {message.role === "assistant" && (
-                  <Avatar className="w-8 h-8">
+                  <Avatar className="w-8 h-8 shrink-0">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot className="w-5 h-5" />
                     </AvatarFallback>
@@ -177,13 +203,13 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 )}
                 <div
                   className={cn(
-                    "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
+                    "max-w-[75%] rounded-2xl px-4 py-2 text-sm break-words",
                     message.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-none"
                       : "bg-muted text-card-foreground rounded-bl-none"
                   )}
                 >
-                  <ChatMessage 
+                  <ChatMessage
                     message={message}
                     isLastMessage={index === messages.length - 1}
                     isTyping={isLoading}
@@ -192,7 +218,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   />
                 </div>
                 {message.role === "user" && (
-                  <Avatar className="w-8 h-8">
+                  <Avatar className="w-8 h-8 shrink-0">
                     <AvatarFallback>
                       <User className="w-5 h-5" />
                     </AvatarFallback>
@@ -212,10 +238,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 </div>
               </div>
             )}
+            <div className="h-2" /> {/* Small spacer at bottom */}
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-2">
+
+      <CardFooter className="p-3 pt-0 shrink-0 bg-card">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -227,21 +255,25 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative w-full">
+                    {/* New Cool Input Container */}
+                    <div className="relative flex items-end w-full p-2 bg-muted/40 border border-input/50 rounded-[24px] focus-within:ring-1 focus-within:ring-primary/30 focus-within:border-primary/50 focus-within:bg-background transition-all duration-200 shadow-sm">
                       <Textarea
+                        {...field}
                         ref={textareaRef}
-                        placeholder={"Écrivez votre message..."}
-                        className="resize-none border-input focus-visible:ring-1 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50 rounded-full pr-12 min-h-[40px] max-h-[120px]"
+                        placeholder="Écrivez votre message..."
+                        className="flex-1 min-h-[24px] max-h-[150px] bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 resize-none py-2 px-2 leading-tight"
                         rows={1}
                         onKeyDown={handleKeyDown}
-                        {...field}
                         disabled={isLoading}
                         autoComplete="off"
                       />
                       <Button
                         type="submit"
                         size="icon"
-                        className="absolute top-1/2 right-2 -translate-y-1/2 flex-shrink-0 rounded-full w-8 h-8"
+                        className={cn(
+                            "h-8 w-8 rounded-full ml-1 shrink-0 transition-opacity duration-200",
+                            !messageValue || isLoading ? "opacity-50" : "opacity-100"
+                        )}
                         disabled={isLoading || !messageValue}
                         aria-label="Send message"
                       >
