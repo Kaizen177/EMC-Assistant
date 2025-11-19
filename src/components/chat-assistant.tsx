@@ -9,33 +9,22 @@ import { cn } from "@/lib/utils";
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [showGreeting, setShowGreeting] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
-    const greetingTimer = setTimeout(() => {
-      setShowGreeting(true);
-    }, 1000); // Show after 1 second
-
+    
     const pulseTimer = setTimeout(() => {
       setIsPulsing(false); // Stop pulsing after 5 seconds
     }, 5000);
 
-    const hideTimer = setTimeout(() => {
-      setShowGreeting(false);
-    }, 5000); // Hide after 5 seconds total (1s delay + 4s visible)
-
     return () => {
-      clearTimeout(greetingTimer);
-      clearTimeout(hideTimer);
       clearTimeout(pulseTimer);
     };
   }, []);
 
   const handleBubbleClick = () => {
     setIsOpen(!isOpen);
-    setShowGreeting(false); // Hide greeting when chat is opened
   };
 
   if (!isClient) {
@@ -49,18 +38,6 @@ export default function ChatAssistant() {
           "fixed bottom-5 right-5 z-[1000] flex items-end gap-3 transition-all duration-300 md:bottom-8 md:right-8"
         )}
       >
-        <div
-          className={cn(
-            "w-auto rounded-lg bg-accent px-4 py-2 text-sm text-accent-foreground shadow-lg transition-all duration-500 ease-in-out mb-2",
-            "relative before:absolute before:bottom-1/2 before:-right-2 before:h-0 before:w-0 before:translate-y-1/2 before:border-b-[8px] before:border-l-[8px] before:border-t-[8px] before:border-b-transparent before:border-t-transparent before:border-l-accent",
-            showGreeting && !isOpen
-              ? "translate-x-0 opacity-100"
-              : "translate-x-4 opacity-0",
-            isOpen ? "hidden" : "" // Immediately hide when chat opens
-          )}
-        >
-          L'assistant EMC est là pour vous aider.
-        </div>
         <div
           onMouseEnter={() => setIsPulsing(true)}
           onMouseLeave={() => setIsPulsing(false)}
