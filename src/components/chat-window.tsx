@@ -88,14 +88,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     if (textarea) {
       textarea.style.height = 'auto'; 
       const scrollHeight = textarea.scrollHeight;
-      const maxHeight = 120;
-      if (scrollHeight > maxHeight) {
-        textarea.style.height = `${maxHeight}px`;
-        textarea.style.overflowY = 'auto';
-      } else {
-        textarea.style.height = `${scrollHeight}px`;
-        textarea.style.overflowY = 'hidden';
-      }
+      textarea.style.height = `${scrollHeight}px`;
     }
   }, [messageValue]);
 
@@ -238,7 +231,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       <Textarea
                         ref={textareaRef}
                         placeholder={"Écrivez votre message..."}
-                        className="resize-none border-input focus-visible:ring-1 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50 rounded-full pr-12"
+                        className="resize-none border-input focus-visible:ring-1 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50 rounded-full pr-12 min-h-[40px] max-h-[120px]"
                         rows={1}
                         onKeyDown={handleKeyDown}
                         {...field}
