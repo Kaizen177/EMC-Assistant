@@ -226,37 +226,39 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-full items-end space-x-2"
+            className="w-full"
           >
             <FormField
               control={control}
               name="message"
               render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem>
                   <FormControl>
-                    <Textarea
-                      ref={textareaRef}
-                      placeholder={"Écrivez votre message..."}
-                      className="resize-none border-input focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50"
-                      rows={1}
-                      onKeyDown={handleKeyDown}
-                      {...field}
-                      disabled={isLoading}
-                      autoComplete="off"
-                    />
+                    <div className="relative w-full">
+                      <Textarea
+                        ref={textareaRef}
+                        placeholder={"Écrivez votre message..."}
+                        className="resize-none border-input focus-visible:ring-1 focus-visible:ring-offset-0 overflow-y-auto bg-muted/50 rounded-full pr-12"
+                        rows={1}
+                        onKeyDown={handleKeyDown}
+                        {...field}
+                        disabled={isLoading}
+                        autoComplete="off"
+                      />
+                      <Button
+                        type="submit"
+                        size="icon"
+                        className="absolute top-1/2 right-2 -translate-y-1/2 flex-shrink-0 rounded-full w-8 h-8"
+                        disabled={isLoading || !messageValue}
+                        aria-label="Send message"
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button
-              type="submit"
-              size="icon"
-              className="flex-shrink-0 rounded-full"
-              disabled={isLoading || !messageValue}
-              aria-label="Send message"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
           </form>
         </Form>
       </CardFooter>
