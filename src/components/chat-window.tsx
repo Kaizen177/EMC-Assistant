@@ -256,7 +256,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 <FormItem>
                   <FormControl>
                     {/* New Cool Input Container */}
-                    <div className="relative flex items-end w-full p-2 bg-muted/40 border border-input/50 rounded-[24px] focus-within:ring-1 focus-within:ring-primary/30 focus-within:border-primary/50 focus-within:bg-background transition-all duration-200 shadow-sm">
+                    <div className="relative flex items-end w-full p-2 bg-background border rounded-[24px] focus-within:ring-2 focus-within:ring-primary/50 transition-all duration-200 shadow-sm">
                       <Textarea
                         {...field}
                         ref={textareaRef}
