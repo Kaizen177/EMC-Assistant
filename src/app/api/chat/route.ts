@@ -7,10 +7,6 @@ import { z } from 'genkit';
 import fs from 'fs';
 import path from 'path';
 
-// Read the prompt file once when the serverless function initializes.
-// This is the stable and performant way to handle external files in a serverless environment.
-const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
-
 const AIPoweredChatInputSchema = z.object({
   message: z.string().describe('The user message to the chatbot.'),
   chatHistory: z.array(z.object({
@@ -38,7 +34,14 @@ const InternalPromptSchema = z.object({
 const aiPoweredChatFlow = ai.defineFlow(
   {
     name: 'aiPoweredChatFlow',
-    inputSchema: AIPoweredChatInputSchema,
+    inputSchema: z.object({
+      message: z.string(),
+      chatHistory: z.array(z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string()
+      })).optional(),
+      promptText: z.string(),
+    }),
     outputSchema: AIPoweredChatOutputSchema,
   },
   async (input) => {
@@ -53,7 +56,7 @@ const aiPoweredChatFlow = ai.defineFlow(
         second: '2-digit'
     });
 
-    const systemPrompt = promptText.replace('{{currentDate}}', currentDate);
+    const systemPrompt = input.promptText.replace('{{currentDate}}', currentDate);
 
     const history = (input.chatHistory || []).map(message => ({
         role: message.role === 'user' ? 'user' : 'model',
@@ -80,6 +83,9 @@ const aiPoweredChatFlow = ai.defineFlow(
 // The main POST request handler.
 export async function POST(req: NextRequest) {
   try {
+    // Read the prompt file on every request to get the latest version.
+    const promptText = fs.readFileSync(path.join(process.cwd(), 'prompt.txt'), 'utf-8');
+
     const body = await req.json();
     
     // Handle warmup request
@@ -91,7 +97,7 @@ export async function POST(req: NextRequest) {
     const { message, chatHistory } = AIPoweredChatInputSchema.parse(body);
 
     // Execute the pre-defined Genkit flow.
-    const result = await aiPoweredChatFlow({ message, chatHistory });
+    const result = await aiPoweredChatFlow({ message, chatHistory, promptText });
 
     return NextResponse.json(result);
   } catch (error) {
