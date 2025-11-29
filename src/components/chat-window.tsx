@@ -1,3 +1,4 @@
+
 "use client";
 
 import { type FC, useEffect, useRef, useState } from "react";
@@ -243,7 +244,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         </ScrollArea>
       </CardContent>
 
-      <CardFooter className="p-3 pt-0 shrink-0 bg-card">
+      <CardFooter className="p-3 pt-0 shrink-0 bg-card rounded-b-2xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
