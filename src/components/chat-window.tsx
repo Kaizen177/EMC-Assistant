@@ -281,7 +281,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                         placeholder={isInputFocused ? '' : 'Écrivez votre message...'}
                         onFocus={() => setIsInputFocused(true)}
                         onBlur={() => setIsInputFocused(false)}
-                        className="flex-1 min-h-[24px] max-h-[150px] bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 resize-none py-2 px-2 leading-tight"
+                        className="flex-1 min-h-[24px] max-h-[150px] bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 resize-none py-2 px-2 leading-tight rounded-md"
                         rows={1}
                         onKeyDown={handleKeyDown}
                         disabled={isLoading}
