@@ -15,12 +15,6 @@ type AIPoweredChatInput = {
     chatHistory: Array<{ role: 'user' | 'assistant'; content: string }>;
 }
 
-const initialMessage: Message = {
-    id: '0',
-    role: 'assistant',
-    content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
-};
-
 const warmupApi = async () => {
     try {
         await fetch('/api/chat', {
@@ -33,7 +27,7 @@ const warmupApi = async () => {
     }
 };
 
-export const useChat = (initialMessages: Message[] = [initialMessage]) => {
+export const useChat = (initialMessages: Message[] = []) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -104,5 +98,5 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
     [messages, toast]
   );
 
-  return { messages, isLoading, sendMessage };
+  return { messages, isLoading, sendMessage, setMessages };
 };

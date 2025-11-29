@@ -41,11 +41,12 @@ const ChatFormSchema = z.object({
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
-  const { messages, isLoading, sendMessage } = useChat();
+  const { messages, isLoading, sendMessage, setMessages } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -54,6 +55,21 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
     },
   });
 
+  useEffect(() => {
+    if (!hasAnimated) {
+      setTimeout(() => {
+        setMessages([
+          {
+            id: '0',
+            role: 'assistant',
+            content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
+          }
+        ]);
+        setHasAnimated(true);
+      }, 300);
+    }
+  }, [hasAnimated, setMessages]);
+  
   const onSubmit = (data: ChatFormValues) => {
     if (!data.message.trim()) return; // Prevent empty sends
     sendMessage(data.message);
@@ -214,7 +230,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   <ChatMessage
                     message={message}
                     isLastMessage={index === messages.length - 1}
-                    isTyping={isLoading}
+                    isTyping={isLoading || (index === 0 && messages.length === 1)}
                     onAnimationUpdate={scrollToBottom}
                     onAnimationComplete={scrollToBottom}
                   />
@@ -228,7 +244,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 )}
               </div>
             ))}
-            {isLoading && (
+            {isLoading && messages.length > 1 && (
               <div className="flex items-end gap-2 justify-start">
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-primary text-primary-foreground">
@@ -258,7 +274,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 <FormItem>
                   <FormControl>
                     {/* New Cool Input Container */}
-                    <div className="relative flex items-end w-full p-2 bg-background border rounded-[24px] focus-within:border-primary transition-all duration-200 shadow-sm">
+                    <div className="relative flex items-end w-full p-2 bg-background border rounded-[24px] shadow-sm transition-all duration-300 ring-4 ring-transparent focus-within:border-primary focus-within:ring-primary/20">
                       <Textarea
                         {...field}
                         ref={textareaRef}
