@@ -18,36 +18,41 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLastMessage, isTyping, onAnimationUpdate, onAnimationComplete }) => {
   const renderContent = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+    const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
     const boldRegex = /\*\*(.*?)\*\*/g;
 
     const renderLine = (line: string, lineKey: string, isListItem: boolean) => {
-      const parts = line.split(boldRegex).filter(Boolean);
-      const content = parts.map((part, index) => {
-        if (index % 2 === 1) {
-          return <strong key={`${lineKey}-bold-${index}`}>{part}</strong>;
-        }
-
-        const linkParts = part.split(urlRegex).filter(Boolean);
-        return linkParts.map((linkPart, linkIndex) => {
-          if (linkPart.match(urlRegex)) {
-            const href = linkPart.startsWith('www.') ? `http://${linkPart}` : linkPart;
-            return (
-              <a
-                key={`${lineKey}-link-${index}-${linkIndex}`}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-green-700 bg-green-100/50 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:underline break-words"
-              >
-                {linkPart}
-              </a>
-            );
-          }
-          return <span key={`${lineKey}-text-${index}-${linkIndex}`} dangerouslySetInnerHTML={{ __html: linkPart }} />;
+        const parts = line.split(markdownLinkRegex);
+        const content = parts.map((part, index) => {
+            if (index % 3 === 1) { // This is the link text
+                const linkUrl = parts[index + 1];
+                return (
+                    <a
+                        key={`${lineKey}-mdlink-${index}`}
+                        href={linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-700 bg-green-100/50 border border-green-300 px-1.5 py-0.5 rounded-md transition-all duration-200 hover:underline break-words"
+                    >
+                        {part}
+                    </a>
+                );
+            }
+            if (index % 3 === 2) { // This is the link url, which we've already used
+                return null;
+            }
+            
+            // Handle bold text within the non-link parts
+            const boldParts = part.split(boldRegex);
+            return boldParts.map((boldPart, boldIndex) => {
+                if (boldIndex % 2 === 1) {
+                    return <strong key={`${lineKey}-bold-${index}-${boldIndex}`}>{boldPart}</strong>;
+                }
+                return <span key={`${lineKey}-text-${index}-${boldIndex}`} dangerouslySetInnerHTML={{ __html: boldPart }} />;
+            });
         });
-      });
-      return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
+
+        return isListItem ? <>{content}</> : <p key={lineKey} className="my-4 first:mt-0 last:mb-0 leading-relaxed">{content}</p>;
     };
 
     const lines = text.split('\n');
