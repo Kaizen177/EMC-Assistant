@@ -45,6 +45,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(ChatFormSchema),
@@ -261,7 +262,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       <Textarea
                         {...field}
                         ref={textareaRef}
-                        placeholder="Écrivez votre message..."
+                        placeholder={isInputFocused ? '' : 'Écrivez votre message...'}
+                        onFocus={() => setIsInputFocused(true)}
+                        onBlur={() => setIsInputFocused(false)}
                         className="flex-1 min-h-[24px] max-h-[150px] bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 resize-none py-2 px-2 leading-tight"
                         rows={1}
                         onKeyDown={handleKeyDown}
