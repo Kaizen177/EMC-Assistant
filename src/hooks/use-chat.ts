@@ -57,7 +57,9 @@ export const useChat = (initialMessages: Message[] = [initialMessage]) => {
       setIsLoading(true);
 
       try {
+        // Correctly prepare history: take all messages *before* the new user message.
         const chatHistoryForApi = newMessages
+          .slice(0, -1) // Exclude the last message (the one we're sending)
           .filter(msg => msg.id !== '0') 
           .slice(-12) 
           .map(({ role, content }) => ({ role, content }));
