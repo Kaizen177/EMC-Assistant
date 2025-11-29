@@ -203,7 +203,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 )}
                 <div
                   className={cn(
-                    "max-w-[85%] rounded-2xl px-4 py-2 text-xs break-words",
+                    "max-w-[85%] rounded-2xl px-4 py-2 text-sm break-words",
                     message.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-none"
                       : "bg-muted text-card-foreground rounded-bl-none"
