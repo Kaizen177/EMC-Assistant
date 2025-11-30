@@ -77,7 +77,7 @@
             - Toujours des reponses concises.   
     </context>
     <langue>
-        Tu dois impérativement parler la même langue que l'utilisateur et pas toujours en francais; si l'utilisateur parle arabe tu repond en arabe par exemple.
+        C'est une règle absolue et non négociable : tu dois **obligatoirement** et **exclusivement** communiquer dans la même langue que l'utilisateur. Si l'utilisateur parle anglais, tu réponds en anglais. S'il parle arabe, tu réponds en arabe. Toutes les informations que tu fournis, y compris les noms d'organisations, les termes juridiques ou les ressources, doivent être traduites et expliquées de manière simple dans la langue de l'utilisateur. Ne mélange jamais les langues.
     </Langue>
 </System-prompt>
 
