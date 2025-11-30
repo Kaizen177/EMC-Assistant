@@ -58,11 +58,21 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   useEffect(() => {
     if (!hasAnimated) {
       setTimeout(() => {
+        let greeting = "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?";
+        try {
+          const userLang = navigator.language || (navigator as any).userLanguage;
+          if (userLang && !userLang.toLowerCase().startsWith('fr')) {
+            greeting = "Hello! I am the EMC Assistant. How can I help you today?";
+          }
+        } catch (e) {
+          // navigator is not available, default to French
+        }
+        
         setMessages([
           {
             id: '0',
             role: 'assistant',
-            content: "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?",
+            content: greeting,
           }
         ]);
         setHasAnimated(true);
@@ -199,7 +209,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         className="flex-1 p-0 overflow-hidden flex flex-col min-h-0"
       >
         <ScrollArea 
-          className="flex-1 h-full w-full" 
+          className="flex-1 h-full w-full chat-background-pattern" 
           ref={scrollAreaRef}
           onScrollCapture={handleScroll}
         >
@@ -274,7 +284,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                 <FormItem>
                   <FormControl>
                     {/* New Cool Input Container */}
-                    <div className="relative flex items-end w-full p-2 bg-background border rounded-[24px] shadow-sm transition-all duration-300 ring-4 ring-transparent focus-within:border-primary focus-within:ring-primary/20">
+                    <div className="relative flex items-end w-full p-2 bg-background border rounded-2xl shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/20">
                       <Textarea
                         {...field}
                         ref={textareaRef}
@@ -291,7 +301,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                         type="submit"
                         size="icon"
                         className={cn(
-                            "h-8 w-8 rounded-full ml-1 shrink-0 transition-opacity duration-200",
+                            "h-8 w-8 rounded-full ml-1 shrink-0 transition-opacity duration-200 disabled:pointer-events-none",
                             !messageValue || isLoading ? "opacity-50" : "opacity-100"
                         )}
                         disabled={isLoading || !messageValue}
