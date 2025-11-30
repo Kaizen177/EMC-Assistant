@@ -58,15 +58,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   useEffect(() => {
     if (!hasAnimated) {
       setTimeout(() => {
-        let greeting = "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?";
-        try {
-          const userLang = navigator.language || (navigator as any).userLanguage;
-          if (userLang && !userLang.toLowerCase().startsWith('fr')) {
-            greeting = "Hello! I am the EMC Assistant. How can I help you today?";
-          }
-        } catch (e) {
-          // navigator is not available, default to French
-        }
+        const greeting = "Bonjour! Je suis l'Assistant EMC. Comment puis-je vous aider aujourd'hui?";
         
         setMessages([
           {
@@ -322,3 +314,5 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
 };
 
 export default ChatWindow;
+
+    
