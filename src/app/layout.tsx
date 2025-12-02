@@ -1,9 +1,10 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'EMC Assistant (BETA 2)',
+  title: 'EMC Assistant (BETA)',
   description: 'AI-Powered Chat Assistant',
 };
 
