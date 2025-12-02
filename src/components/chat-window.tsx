@@ -138,7 +138,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   return (
     <Card
       className={cn(
-        "w-full h-full md:w-[400px] md:h-[600px] shadow-2xl rounded-2xl flex flex-col bg-card border-0 md:border",
+        "w-full h-full shadow-2xl rounded-2xl flex flex-col bg-card border-0 md:border",
         className
       )}
     >
@@ -314,5 +314,3 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
 };
 
 export default ChatWindow;
-
-    

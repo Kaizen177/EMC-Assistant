@@ -76,13 +76,13 @@ export default function ChatAssistant() {
       <div
         ref={chatWindowRef}
         className={cn(
-          "fixed inset-0 z-[999] transition-all duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto max-h-full",
+          "fixed inset-0 z-[999] transition-all duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-[600px] md:max-h-[calc(100vh-4rem)] md:w-[400px]",
           isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
         )}
       >
         <ChatWindow
           className={cn(
-            "transform-gpu origin-bottom-right transition-all duration-300 ease-out h-full max-h-full md:max-h-[600px]",
+            "transform-gpu origin-bottom-right transition-all duration-300 ease-out h-full w-full",
             isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
           )}
           onClose={() => setIsOpen(false)}
