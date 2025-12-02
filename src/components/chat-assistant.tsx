@@ -76,7 +76,7 @@ export default function ChatAssistant() {
       <div
         ref={chatWindowRef}
         className={cn(
-          "fixed inset-0 z-[999] transition-all duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto",
+          "fixed inset-0 z-[999] transition-all duration-300 md:bottom-8 md:right-8 md:left-auto md:top-auto md:h-auto md:w-auto max-h-full",
           isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
         )}
       >
