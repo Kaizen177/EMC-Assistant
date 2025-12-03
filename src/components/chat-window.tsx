@@ -40,6 +40,9 @@ const ChatFormSchema = z.object({
 
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
+// Helper function to detect Arabic characters
+const isArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
+
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage, setMessages } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -155,7 +158,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           <div>
             <div className="flex items-center gap-2">
               <p className="text-lg font-semibold">EMC Assistant</p>
-              <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+              <span className="text-xs font-semibold text-green-700 bg-green-100/50 border border-green-300 px-2 py-0.5 rounded-full">
                 BETA
               </span>
             </div>
@@ -206,7 +209,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
           onScrollCapture={handleScroll}
         >
           <div className="p-4 space-y-4">
-            {messages.map((message, index) => (
+            {messages.map((message, index) => {
+              const messageIsArabic = isArabic(message.content);
+              return (
               <div
                 key={message.id}
                 className={cn(
@@ -228,6 +233,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                       ? "bg-primary text-primary-foreground rounded-br-none"
                       : "bg-muted text-card-foreground rounded-bl-none"
                   )}
+                   style={{
+                    direction: messageIsArabic ? 'rtl' : 'ltr',
+                    textAlign: messageIsArabic ? 'right' : 'left',
+                  }}
                 >
                   <ChatMessage
                     message={message}
@@ -245,7 +254,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                   </Avatar>
                 )}
               </div>
-            ))}
+            )})}
             {isLoading && messages.length > 1 && (
               <div className="flex items-end gap-2 justify-start">
                 <Avatar className="w-8 h-8">
