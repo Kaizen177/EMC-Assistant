@@ -288,6 +288,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
                         onKeyDown={handleKeyDown}
                         disabled={isLoading}
                         autoComplete="off"
+                        spellCheck="false"
                       />
                       <Button
                         type="submit"
