@@ -40,8 +40,20 @@ const ChatFormSchema = z.object({
 
 type ChatFormValues = z.infer<typeof ChatFormSchema>;
 
-// Helper function to detect Arabic characters
-const isArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
+// Helper function to detect if a message is predominantly Arabic
+const isPredominantlyArabic = (text: string) => {
+  const arabicChars = (text.match(/[\u0600-\u06FF]/g) || []).length;
+  const latinChars = (text.match(/[a-zA-Z]/g) || []).length;
+  const totalChars = arabicChars + latinChars;
+
+  if (totalChars === 0) {
+    return false;
+  }
+
+  // Consider the text Arabic if more than 50% of its alphabetic characters are Arabic
+  return (arabicChars / totalChars) > 0.5;
+};
+
 
 const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
   const { messages, isLoading, sendMessage, setMessages } = useChat();
@@ -210,7 +222,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ onClose, className }) => {
         >
           <div className="p-4 space-y-4">
             {messages.map((message, index) => {
-              const messageIsArabic = isArabic(message.content);
+              const messageIsArabic = isPredominantlyArabic(message.content);
               return (
               <div
                 key={message.id}
