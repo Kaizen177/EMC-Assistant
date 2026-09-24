@@ -64,7 +64,7 @@ const aiPoweredChatFlow = ai.defineFlow(
     }));
 
     const response = await ai.generate({
-        model: 'googleai/gemini-2.5-flash',
+        model: 'googleai/gemini-3.5-flash-lite',
         system: systemPrompt,
         messages: [...history, { role: 'user', content: [{ text: input.message }] }],
     });
